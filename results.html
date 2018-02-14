@@ -44,10 +44,12 @@
     data.addColumn('string', 'Klass');
     data.addColumn('string', 'Klubb');
     data.addColumn('string', 'Land');
+    data.addColumn('string', 'Notering');
 
     var club;
     var result;
     var country;
+    var note;
 
     // Parse the HTML from the URL
     var lines = html.split('\n');
@@ -61,10 +63,20 @@
             event = get_event_name(event);
         }
         if (lines[i].match(/<td width='170'/)) {
-            // Relay results, FIXME later
-            continue;
+            // Relay results
+            var info = lines[i].split(/<\/td>/);
+            var name = remove_html_tags(info[1]);
+            var year = '';
+            country = 'SWE';
+            club = remove_html_tags(info[1]);
+            console.log(club);
+            result = reformat(remove_html_tags(info[3]));
+            note = remove_html_tags(info[2]);
+            
+            // All data received, add a row to the Data table 
+            data.addRow([event, name, year, result, cl, club, country, note]);
         }
-        if (lines[i].match(/<td align='right' width='25'/)) {
+        else if (lines[i].match(/<td align='right' width='25'/)) {
             var info = lines[i].split(/<\/td>/);
             var name = remove_html_tags(info[1]);
             var year = remove_html_tags(info[2]);
@@ -78,19 +90,36 @@
                 // Table includes country
                 country = remove_html_tags(info[3]);
                 club = remove_html_tags(info[4]);
-                result = remove_html_tags(info[5]);
+                result = reformat(remove_html_tags(info[5]));
+                note = '';
             }
             else {
-                club = remove_html_tags(info[3]);
-                result = remove_html_tags(info[4]);
                 country = 'SWE';
+                club = remove_html_tags(info[3]);
+                result = reformat(remove_html_tags(info[4]));
+                note = '';
             }
             
             // All data received, add a row to the Data table 
-            data.addRow([event, name, year, result, cl, club, country]);
+            data.addRow([
+                {v: event,    p: {'className': 'left-text'}}, 
+                {v: name,     p: {'className': 'left-text'}},
+                {v: year,     p: {'className': 'left-text'}},
+                {v: result,   p: {'className': 'right-text'}},
+                {v: cl,       p: {'className': 'left-text'}},
+                {v: club,     p: {'className': 'left-text'}},
+                {v: country,  p: {'className': 'left-text'}},
+                {v: note,     p: {'className': 'left-text'}},
+            ]);
         }
     }
     drawDashboard();
+  }
+  
+  function reformat(result) {
+      result = result.replace(".",",");
+      result = result.replace(":",".")
+      return result;
   }
   
   function get_event_name(event) {
@@ -142,6 +171,17 @@
     if (event.match(/3000m76/))      return '3.000 meter hinder, 76,2 cm';
     if (event.match(/3000m91/))      return '3.000 meter hinder, 91,4 cm';
     if (event.match(/Hinder/))       return event; // Catch all unknown Steeplechase events
+
+    // Relay Events
+    if (event.match(/  /))           return 'Amerikansk stafett 2.000 meter';
+    if (event.match(/3 x 600m/))     return 'Stafett 3x600 meter';
+    if (event.match(/3 x 800m/))     return 'Stafett 3x800 meter';
+    if (event.match(/4 x 100m/))     return 'Stafett 4x100 meter';
+    if (event.match(/4 x 200m/))     return 'Stafett 4x200 meter';
+    if (event.match(/4 x 80m/))      return 'Stafett 4x80 meter';
+    if (event.match(/5 x 60/))       return 'Stafett 5x60 meter';
+    if (event.match(/6 x 200m/))     return 'Stafett 6x200 meter';
+    if (event.match(/  /))           return 'Svensk stafett 1000 meter';
 
     // Running events
     if (event.match(/40m/))          return '40 meter';
@@ -209,17 +249,6 @@
     if (event.match(/Vikt11/))       return 'Vikt 11,34 kg';
     if (event.match(/Vikt15/))       return 'Vikt 15,88 kg';
     if (event.match(/Vortex/))       return 'Vortex';
-    
-    // Relay Events
-    if (event.match(/  /))           return 'Amerikansk stafett 2.000 meter';
-    if (event.match(/  /))           return 'Stafett 3x600 meter';
-    if (event.match(/  /))           return 'Stafett 3x800 meter';
-    if (event.match(/  /))           return 'Stafett 4x100 meter';
-    if (event.match(/  /))           return 'Stafett 4x200 meter';
-    if (event.match(/  /))           return 'Stafett 4x80 meter';
-    if (event.match(/  /))           return 'Stafett 5x60 meter';
-    if (event.match(/  /))           return 'Stafett 6x200 meter';
-    if (event.match(/  /))           return 'Svensk stafett 1000 meter';
 
     // Multi events
     if (event.match(/  /))           return 'Mångkamp';
