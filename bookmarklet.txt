@@ -1,1 +1,0 @@
-javascript:location.href='http://friidrott-dev.niklassons.net/results.html?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title)
