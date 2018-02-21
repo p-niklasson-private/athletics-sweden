@@ -217,9 +217,9 @@
     if (event.match(/10000m/))       return '10.000 meter';
     
     // Jumping events
-    if (event.match(/H*jd/))         return 'Höjdhopp';
-    if (event.match(/L*ngdzon/))     return 'Längdhopp zon';
-    if (event.match(/L*ngd/))        return 'Längdhopp';
+    if (event.match(/Höjd/))         return 'Höjdhopp';
+    if (event.match(/Längdzon/))     return 'Längdhopp zon';
+    if (event.match(/Längd/))        return 'Längdhopp';
     if (event.match(/Stav/))         return 'Stavhopp';
     if (event.match(/Trestegzon/))   return 'Tresteg zon';
     if (event.match(/Tresteg/))      return 'Tresteg';
@@ -242,14 +242,14 @@
     if (event.match(/Kula5.5/))      return 'Kula 5,5 kg';
     if (event.match(/Kula6.0/))      return 'Kula 6,0 kg';
     if (event.match(/Kula7.26/))     return 'Kula 7,26 kg';
-    if (event.match(/Sl*gga0.5/))    return 'Slägga 0,5 kg';
-    if (event.match(/Sl*gga1.0/))    return 'Slägga 1,0 kg';
-    if (event.match(/Sl*gga2.0/))    return 'Slägga 2,0 kg';
-    if (event.match(/Sl*gga3.0/))    return 'Slägga 3,0 kg';
-    if (event.match(/Sl*gga4.0/))    return 'Slägga 4,0 kg';
-    if (event.match(/Sl*gga5.0/))    return 'Slägga 5,0 kg';
-    if (event.match(/Sl*gga6.0/))    return 'Slägga 6,0 kg';
-    if (event.match(/Sl*gga7.26/))   return 'Slägga 7,26 kg';
+    if (event.match(/Slägga0.5/))    return 'Slägga 0,5 kg';
+    if (event.match(/Slägga1.0/))    return 'Slägga 1,0 kg';
+    if (event.match(/Slägga2.0/))    return 'Slägga 2,0 kg';
+    if (event.match(/Slägga3.0/))    return 'Slägga 3,0 kg';
+    if (event.match(/Slägga4.0/))    return 'Slägga 4,0 kg';
+    if (event.match(/Slägga5.0/))    return 'Slägga 5,0 kg';
+    if (event.match(/Slägga6.0/))    return 'Slägga 6,0 kg';
+    if (event.match(/Slägga7.26/))   return 'Slägga 7,26 kg';
     if (event.match(/Spjut300/))     return 'Spjut 300g';
     if (event.match(/Spjut400/))     return 'Spjut 400g';
     if (event.match(/Spjut500/))     return 'Spjut 500g';
@@ -280,7 +280,7 @@
   function remove_html_tags(html) {
      var tmp = document.createElement("DIV");
      tmp.innerHTML = html;
-     return tmp.textContent || tmp.innerText;
+     return tmp.textContent.trim() || tmp.innerText.trim();
   }
   
   function drawDashboard() {
