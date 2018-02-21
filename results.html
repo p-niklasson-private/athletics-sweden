@@ -24,7 +24,9 @@
   
   
   function myMenu() {
-    page_header.innerHTML = '<a href="' + url + '">' + title + '</a>';
+    if (title) {
+      page_header.innerHTML = '<a href="' + url + '">' + title + '</a>';
+    }
   }
 
   function populateResultData(url) {
@@ -333,6 +335,14 @@
         <div id="table_div" class="w3-center"><p><i class="fa fa-spinner w3-spin" style="font-size:64px"></i></p></div>
         <p></p>
       </div>
+    </div>
+    <div class="w3-container w3-round-large w3-light-grey w3-margin">
+    <p></p>
+      <div id="info_div" class="w3-center">
+        Drag knappen nedan till bokmärkesfältet. Använd sedan bokmärket för att hämta resultat från <a href="http://www.trackandfield.se/">Track and fields</a> resultatlistor.<p></p>
+        <a href="javascript:location.href='http://friidrott.niklassons.net/results.html?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title)"><img border="0" alt="Hämta resultat!" src="images/button_hamta-resultat.gif"></a>
+      </div>
+    <p></p>
     </div>
   </body>
 </html>
