@@ -63,18 +63,31 @@
             var event = infostring.replace(cl + " ", "");
             event = get_event_name(event);
         }
-        if (lines[i].match(/<td width='170'/)) {
+        if (lines[i].match(/<td colspan='3' width='170'>/)) {
             // Relay results
             var info = lines[i].split(/<\/td>/);
             var name = remove_html_tags(info[1]);
             var year = '';
             country = 'SWE';
-            club = remove_html_tags(info[1]);
+            var name_info = name.split(/ /);
+            club = name_info[0] + ' ' + name_info[1];
             result = reformat(remove_html_tags(info[3]));
-            note = remove_html_tags(info[2]);
+            note = info[2].replace(/<br>/g, "BREAK");
+            note = remove_html_tags(note);
+            note = note.replace(/BREAK/g, "<br>");
+            note = note.replace(/<br><br>/g, "");
             
-            // All data received, add a row to the Data table 
-            data.addRow([event, name, year, result, cl, club, country, note]);
+            // All data received, add a row to the Data table
+            data.addRow([
+                {v: event,    p: {'className': 'left-text'}}, 
+                {v: name,     p: {'className': 'left-text'}},
+                {v: year,     p: {'className': 'left-text'}},
+                {v: result,   p: {'className': 'right-text'}},
+                {v: cl,       p: {'className': 'left-text'}},
+                {v: club,     p: {'className': 'left-text'}},
+                {v: country,  p: {'className': 'left-text'}},
+                {v: note,     p: {'className': 'left-text'}},
+            ]);
         }
         else if (lines[i].match(/<td align='right' width='25'/)) {
             var info = lines[i].split(/<\/td>/);
@@ -339,7 +352,7 @@
     <div class="w3-container w3-round-large w3-light-grey w3-margin">
     <p></p>
       <div id="info_div" class="w3-center">
-        Drag knappen nedan till bokmärkesfältet. Använd sedan bokmärket för att hämta resultat från <a href="http://www.trackandfield.se/">Track and fields</a> resultatlistor.<p></p>
+        Drag knappen nedan till bokmärkesfältet. Använd sedan bokmärket för att konvertera resultat från <a href="http://www.trackandfield.se/">Track and fields</a> resultatlistor.<p></p>
         <a href="javascript:location.href='http://friidrott.niklassons.net/results.html?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title)"><img border="0" alt="Hämta resultat!" src="images/button_hamta-resultat.gif"></a>
       </div>
     <p></p>
