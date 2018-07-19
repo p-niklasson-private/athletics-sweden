@@ -27,6 +27,7 @@
     if (title) {
       page_header.innerHTML = '<a href="' + url + '">' + title + '</a>';
     }
+    menu('1');
   }
 
   function populateResultData(url) {
@@ -39,23 +40,30 @@
     // Create the columns in the data table 
     data = new google.visualization.DataTable();
     data.addColumn('string', 'Gren');
+    data.addColumn('string', 'Klass');
     data.addColumn('string', 'Namn');
     data.addColumn('string', 'Född');
     data.addColumn('string', 'Resultat');
-    data.addColumn('string', 'Klass');
+    data.addColumn('string', 'Vind');
+    data.addColumn('string', 'Not');
+    data.addColumn('string', 'Plats');
+    data.addColumn('string', 'Omgång');
     data.addColumn('string', 'Klubb');
     data.addColumn('string', 'Land');
-    data.addColumn('string', 'Notering');
 
     var club;
     var result;
+    var wind;
     var country;
     var note;
-
+    var place;
+    var place_or_wind;
+    var round;
+    
     // Parse the HTML from the URL
     var lines = html.split('\n');
     for (var i = 0; i < lines.length; i++) {
-        // Getting Class and Events
+        // Get Class and Events
         if (lines[i].match(/<th align='left' colspan='2'/) || lines[i].match(/<th align='left' colspan='4'/)) {
             var infostring = remove_html_tags(lines[i])
             var info = infostring.split(/ /);
@@ -63,34 +71,51 @@
             var event = infostring.replace(cl + " ", "");
             event = get_event_name(event);
         }
+        
+        // Get round and wind info
+        if (lines[i].match(/class='style1'/)) {
+            var info = lines[i].split(/<\/td>/);            
+            var round = remove_html_tags(info[0]);
+            var wind = remove_html_tags(info[1]);
+        }
+        
+        // Get relay results
         if (lines[i].match(/<td colspan='3' width='170'>/)) {
-            // Relay results
             var info = lines[i].split(/<\/td>/);
+            var place = remove_html_tags(info[0]);
             var name = remove_html_tags(info[1]);
             var year = '';
             country = 'SWE';
             var name_info = name.split(/ /);
             club = name_info[0] + ' ' + name_info[1];
             result = reformat(remove_html_tags(info[3]));
-            note = info[2].replace(/<br>/g, "BREAK");
-            note = remove_html_tags(note);
-            note = note.replace(/BREAK/g, "<br>");
-            note = note.replace(/<br><br>/g, "");
+            var members = info[2].replace(/<br>/g, "BREAK");
+            members = remove_html_tags(members);
+            members = members.replace(/BREAK/g, "<br>");
+            members = members.replace(/<br><br>/g, "");
+            name = '<b>' + name + '</b><br>' + members;
             
             // All data received, add a row to the Data table
             data.addRow([
-                {v: event,    p: {'className': 'left-text'}}, 
+                {v: event,    p: {'className': 'left-text'}},
+                {v: cl,       p: {'className': 'center-text'}},
                 {v: name,     p: {'className': 'left-text'}},
-                {v: year,     p: {'className': 'left-text'}},
+                {v: year,     p: {'className': 'center-text'}},
                 {v: result,   p: {'className': 'right-text'}},
-                {v: cl,       p: {'className': 'left-text'}},
+                {v: wind,     p: {'className': 'center-text'}},
+                {v: note,     p: {'className': 'right-text'}},
+                {v: place,    p: {'className': 'center-text'}},
+                {v: round,    p: {'className': 'left-text'}},
                 {v: club,     p: {'className': 'left-text'}},
-                {v: country,  p: {'className': 'left-text'}},
-                {v: note,     p: {'className': 'left-text'}},
+                {v: country,  p: {'className': 'center-text'}},
             ]);
         }
+        
+        // Get result info
         else if (lines[i].match(/<td align='right' width='25'/)) {
+        //else if (lines[i].match(/class='style2'/)) {
             var info = lines[i].split(/<\/td>/);
+            var place = remove_html_tags(info[0]);
             var name = remove_html_tags(info[1]);
             var year = remove_html_tags(info[2]);
             if (Number(year) > 30) {
@@ -104,25 +129,49 @@
                 country = remove_html_tags(info[3]);
                 club = remove_html_tags(info[4]);
                 result = reformat(remove_html_tags(info[5]));
-                note = '';
+                note = remove_html_tags(info[6]);       
+                place_or_wind = remove_html_tags(info[7]);
+
             }
             else {
                 country = 'SWE';
                 club = remove_html_tags(info[3]);
                 result = reformat(remove_html_tags(info[4]));
-                note = '';
+                note = remove_html_tags(info[5]); 
+                place_or_wind = remove_html_tags(info[6]);
+            }
+            if (place_or_wind.match(/,/)) {
+                wind = place_or_wind;
+            }
+            else if (place_or_wind != '') {
+                place = place_or_wind;
+            }
+            
+            // Add a '+' sign if needed
+            if (wind && ! wind.match(/-/) && ! wind.match(/\+/)) {
+                wind = "+" + wind;
+            }
+            
+            if (event == "Höjdhopp" || event == "Stavhopp") {
+                int_result = parseInt(result);
+                if (int_result) {
+                    result = reformat("" + parseInt(result) / 100);
+                }
             }
             
             // All data received, add a row to the Data table 
             data.addRow([
-                {v: event,    p: {'className': 'left-text'}}, 
+                {v: event,    p: {'className': 'left-text'}},
+                {v: cl,       p: {'className': 'center-text'}},
                 {v: name,     p: {'className': 'left-text'}},
-                {v: year,     p: {'className': 'left-text'}},
+                {v: year,     p: {'className': 'center-text'}},
                 {v: result,   p: {'className': 'right-text'}},
-                {v: cl,       p: {'className': 'left-text'}},
+                {v: wind,     p: {'className': 'center-text'}},
+                {v: note,     p: {'className': 'right-text'}},
+                {v: place,    p: {'className': 'center-text'}},
+                {v: round,    p: {'className': 'left-text'}},
                 {v: club,     p: {'className': 'left-text'}},
-                {v: country,  p: {'className': 'left-text'}},
-                {v: note,     p: {'className': 'left-text'}},
+                {v: country,  p: {'className': 'center-text'}},
             ]);
         }
     }
@@ -191,6 +240,7 @@
     if (event.match(/3 x 800m/))     return 'Stafett 3x800 meter';
     if (event.match(/4 x 100m/))     return 'Stafett 4x100 meter';
     if (event.match(/4 x 200m/))     return 'Stafett 4x200 meter';
+    if (event.match(/4 x 400m/))     return 'Stafett 4x400 meter';
     if (event.match(/4 x 80m/))      return 'Stafett 4x80 meter';
     if (event.match(/5 x 60/))       return 'Stafett 5x60 meter';
     if (event.match(/6 x 200m/))     return 'Stafett 6x200 meter';
@@ -287,11 +337,12 @@
     var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
 
     var eventFilter = filter('event_filter', 0, 'events');
-    var nameFilter = filter('name_filter', 1, 'names');
-    var yearFilter = filter('year_filter', 2, 'years');
-    var classFilter = filter('class_filter', 4, 'classes');    
-    var clubFilter = filter('club_filter', 5, 'clubs');
-    var countryFilter = filter('country_filter', 6, 'countries');
+    var classFilter = filter('class_filter', 1, 'classes');  
+    var nameFilter = filter('name_filter', 2, 'names');
+    var yearFilter = filter('year_filter', 3, 'years');
+  
+    var clubFilter = filter('club_filter', 9, 'clubs');
+    var countryFilter = filter('country_filter', 10, 'countries');
 
     var resultTable = new google.visualization.ChartWrapper({
           'chartType': 'Table',
