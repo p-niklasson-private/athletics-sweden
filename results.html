@@ -93,13 +93,13 @@
             members = remove_html_tags(members);
             members = members.replace(/BREAK/g, "<br>");
             members = members.replace(/<br><br>/g, "");
-            name = '<b>' + name + '</b><br>' + members;
+            formatted_name = '<b>' + name + '</b><br>' + members;
             
             // All data received, add a row to the Data table
             data.addRow([
                 {v: event,    p: {'className': 'left-text'}},
                 {v: cl,       p: {'className': 'center-text'}},
-                {v: name,     p: {'className': 'left-text'}},
+                {v: name,     p: {'className': 'left-text'}, f: formatted_name},
                 {v: year,     p: {'className': 'center-text'}},
                 {v: result,   p: {'className': 'right-text'}},
                 {v: wind,     p: {'className': 'center-text'}},
