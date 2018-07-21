@@ -52,27 +52,27 @@ function fileGetJsonData(file_name) {
     // Get the generated json data file from disc. easiest to do in PHP...
     var jsonData, result;
     $.ajax({
-       url: "readDataFile.php",
-       dataType: "json",
-       data: {file_name: file_name},
-       async: true,
-       success: function(result) {
-           jsonData = result;
-           data = new google.visualization.DataTable(jsonData);
-           finished();
-       }
+        url: "readDataFile.php",
+        dataType: "json",
+        data: {file_name: file_name},
+        async: true,
+        success: function(result) {
+            jsonData = result;
+            data = new google.visualization.DataTable(jsonData);
+            finished();
+        }
     });
 }
 
 function filter(container, column, name) {
     var filter = new google.visualization.ControlWrapper({
-          'controlType': 'CategoryFilter',
-          'containerId': container,
-          'options': {
+        'controlType': 'CategoryFilter',
+        'containerId': container,
+        'options': {
             'filterColumnIndex': column,
             'ui': {'selectedValuesLayout': 'belowStacked', 'label': ''}
-          }
-        });
+        }
+    });
     if (localStorage) {
         var value = localStorage.getItem(name);
         if (value) {
@@ -92,7 +92,7 @@ function storeFilter(filter, name) {
 
 function findGetParameter(parameterName) {
     var result = null,
-        tmp = [];
+    tmp = [];
     var items = location.search.substr(1).split("&");
     for (var index = 0; index < items.length; index++) {
         tmp = items[index].split("=");
@@ -106,25 +106,24 @@ function menu() {
     var option_2 = '';  // Sprintkalkylator
 
     var active = 'class="w3-red"';
-    
+
     for (i = 0; i < arguments.length; i++) {
         if (arguments[i] == '1') { option_1 = active; }
         if (arguments[i] == '2') { option_2 = active; }
-    }  
-      
-    var menuString = 
-        '<ul class="w3-navbar w3-round-large w3-light-grey w3-medium w3-margin">' +
-        '<li></li>' +
-        '<li><a ' + option_1 + 'href="results.html"><i class="fa fa-list"></i> Hämta resultat</a></li>' +
-        '<li><a ' + option_2 + 'href="SprintCalculator.html"><i class="fa fa-calculator"></i> Sprintkalkylator</a></li>' +
-        '<li class="w3-dropdown-hover">' +
-          '<a href="#"><i class="fa fa-link"></i> Länkar <i class="fa fa-caret-down"></i></a>' +
-          '<div class="w3-dropdown-content w3-white w3-card-4">' +
-            '<a href="https://hanvikenssk.myclub.se/friidrott" target="_blank"><i class="fa fa-link"></i> Hanviken SK friidrott</a>' +
-            '<a href="http://friidrott.se" target="_blank"><i class="fa fa-link"></i> Friidrott.se</a>' +
-          '</div>' +
-        '</li>' +
-      '</ul>';
+    }
+
+    var menuString =
+    '<ul class="w3-navbar w3-round-large w3-light-grey w3-medium w3-margin">' +
+    '<li></li>' +
+    '<li><a ' + option_1 + 'href="results.html"><i class="fa fa-list"></i> Hämta resultat</a></li>' +
+    '<li><a ' + option_2 + 'href="SprintCalculator.html"><i class="fa fa-calculator"></i> Sprintkalkylator</a></li>' +
+    '<li class="w3-dropdown-hover">' +
+    '<a href="#"><i class="fa fa-link"></i> Länkar <i class="fa fa-caret-down"></i></a>' +
+    '<div class="w3-dropdown-content w3-white w3-card-4">' +
+    '<a href="https://hanvikenssk.myclub.se/friidrott" target="_blank"><i class="fa fa-link"></i> Hanviken SK friidrott</a>' +
+    '<a href="http://friidrott.se" target="_blank"><i class="fa fa-link"></i> Friidrott.se</a>' +
+    '</div>' +
+    '</li>' +
+    '</ul>';
     document.getElementById('menu').innerHTML = menuString;
 }
-

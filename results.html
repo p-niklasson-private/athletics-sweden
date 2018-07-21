@@ -1,413 +1,412 @@
 <!DOCTYPE HTML>
 <head>
-  <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
-  <title>Hanviken friidrott - Tävlingsresultat</title>
-  <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript" src="includes/athletics-sweden.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  
-  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-  <link rel="stylesheet" href="includes/athletics-sweden.css">
-  <script type="text/javascript">
-  
-  var data
-  var html
-  
-  var url = findGetParameter('url');
-  var title = findGetParameter('title');
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+    <title>Hanviken friidrott - Tävlingsresultat</title>
+    <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="includes/athletics-sweden.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-  google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
-  google.charts.setOnLoadCallback(function() { populateResultData(url); });
-  
-  
-  function myMenu() {
-    if (title) {
-      page_header.innerHTML = '<a href="' + url + '">' + title + '</a>';
-    }
-    menu('1');
-  }
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="includes/athletics-sweden.css">
+    <script type="text/javascript">
 
-  function populateResultData(url) {
-    html = $.ajax({
-        url: 'includes/readHtmlFile.php?url=' + encodeURIComponent(url),
-        dataType: "json",
-        async: false
-    }).responseText;
-     
-    // Create the columns in the data table 
-    data = new google.visualization.DataTable();
-    data.addColumn('string', 'Gren');
-    data.addColumn('string', 'Klass');
-    data.addColumn('string', 'Namn');
-    data.addColumn('string', 'Född');
-    data.addColumn('string', 'Resultat');
-    data.addColumn('string', 'Vind');
-    data.addColumn('string', 'Not');
-    data.addColumn('string', 'Plats');
-    data.addColumn('string', 'Omgång');
-    data.addColumn('string', 'Klubb');
-    data.addColumn('string', 'Land');
+    var data
+    var html
 
-    var club;
-    var result;
-    var wind;
-    var country;
-    var note;
-    var place;
-    var place_or_wind;
-    var round;
+    var url = findGetParameter('url');
+    var title = findGetParameter('title');
     
-    // Parse the HTML from the URL
-    var lines = html.split('\n');
-    for (var i = 0; i < lines.length; i++) {
-        // Get Class and Events
-        if (lines[i].match(/<th align='left' colspan='2'/) || lines[i].match(/<th align='left' colspan='4'/)) {
-            var infostring = remove_html_tags(lines[i])
-            var info = infostring.split(/ /);
-            var cl = info[0];
-            var event = infostring.replace(cl + " ", "");
-            event = get_event_name(event);
-        }
-        
-        // Get round and wind info
-        if (lines[i].match(/class='style1'/)) {
-            var info = lines[i].split(/<\/td>/);            
-            var round = remove_html_tags(info[0]);
-            var wind = remove_html_tags(info[1]);
-        }
-        
-        // Get relay results
-        if (lines[i].match(/<td colspan='3' width='170'>/)) {
-            var info = lines[i].split(/<\/td>/);
-            var place = remove_html_tags(info[0]);
-            var name = remove_html_tags(info[1]);
-            var year = '';
-            country = 'SWE';
-            var name_info = name.split(/ /);
-            club = name_info[0] + ' ' + name_info[1];
-            result = reformat(remove_html_tags(info[3]));
-            var members = info[2].replace(/<br>/g, "BREAK");
-            members = remove_html_tags(members);
-            members = members.replace(/BREAK/g, "<br>");
-            members = members.replace(/<br><br>/g, "");
-            formatted_name = '<b>' + name + '</b><br>' + members;
-            
-            // All data received, add a row to the Data table
-            data.addRow([
-                {v: event,    p: {'className': 'left-text'}},
-                {v: cl,       p: {'className': 'center-text'}},
-                {v: name,     p: {'className': 'left-text'}, f: formatted_name},
-                {v: year,     p: {'className': 'center-text'}},
-                {v: result,   p: {'className': 'right-text'}},
-                {v: wind,     p: {'className': 'center-text'}},
-                {v: note,     p: {'className': 'right-text'}},
-                {v: place,    p: {'className': 'center-text'}},
-                {v: round,    p: {'className': 'left-text'}},
-                {v: club,     p: {'className': 'left-text'}},
-                {v: country,  p: {'className': 'center-text'}},
-            ]);
-        }
-        
-        // Get result info
-        else if (lines[i].match(/<td align='right' width='25'/)) {
-        //else if (lines[i].match(/class='style2'/)) {
-            var info = lines[i].split(/<\/td>/);
-            var place = remove_html_tags(info[0]);
-            var name = remove_html_tags(info[1]);
-            var year = remove_html_tags(info[2]);
-            if (Number(year) > 30) {
-                year = "19" + year;
-            }
-            else {
-                year = "20" + year;
-            }
-            if (info.length == 10) {
-                // Table includes country
-                country = remove_html_tags(info[3]);
-                club = remove_html_tags(info[4]);
-                result = reformat(remove_html_tags(info[5]));
-                note = remove_html_tags(info[6]);       
-                place_or_wind = remove_html_tags(info[7]);
+    google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
+    google.charts.setOnLoadCallback(function() { populateResultData(url); });
 
+
+    function myMenu() {
+        if (title) {
+            page_header.innerHTML = '<a href="' + url + '">' + title + '</a>';
+        }
+        menu('1');
+    }
+
+    function populateResultData(url) {
+        html = $.ajax({
+            url: 'includes/readHtmlFile.php?url=' + encodeURIComponent(url),
+            dataType: "json",
+            async: false
+        }).responseText;
+
+        // Create the columns in the data table
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Gren');
+        data.addColumn('string', 'Klass');
+        data.addColumn('string', 'Namn');
+        data.addColumn('string', 'Född');
+        data.addColumn('string', 'Resultat');
+        data.addColumn('string', 'Vind');
+        data.addColumn('string', 'Not');
+        data.addColumn('string', 'Plats');
+        data.addColumn('string', 'Omgång');
+        data.addColumn('string', 'Klubb');
+        data.addColumn('string', 'Land');
+
+        var club;
+        var result;
+        var wind;
+        var country;
+        var note;
+        var place;
+        var place_or_wind;
+        var round;
+
+        // Parse the HTML from the URL
+        var lines = html.split('\n');
+        for (var i = 0; i < lines.length; i++) {
+            // Get Class and Events
+            if (lines[i].match(/<th align='left' colspan='2'/) || lines[i].match(/<th align='left' colspan='4'/)) {
+                var infostring = remove_html_tags(lines[i])
+                var info = infostring.split(/ /);
+                var cl = info[0];
+                var event = infostring.replace(cl + " ", "");
+                event = get_event_name(event);
             }
-            else {
+
+            // Get round and wind info
+            if (lines[i].match(/class='style1'/)) {
+                var info = lines[i].split(/<\/td>/);
+                var round = remove_html_tags(info[0]);
+                var wind = remove_html_tags(info[1]);
+            }
+
+            // Get relay results
+            if (lines[i].match(/<td colspan='3' width='170'>/)) {
+                var info = lines[i].split(/<\/td>/);
+                var place = remove_html_tags(info[0]);
+                var name = remove_html_tags(info[1]);
+                var year = '';
                 country = 'SWE';
-                club = remove_html_tags(info[3]);
-                result = reformat(remove_html_tags(info[4]));
-                note = remove_html_tags(info[5]); 
-                place_or_wind = remove_html_tags(info[6]);
+                var name_info = name.split(/ /);
+                club = name_info[0] + ' ' + name_info[1];
+                result = reformat(remove_html_tags(info[3]));
+                var members = info[2].replace(/<br>/g, "BREAK");
+                members = remove_html_tags(members);
+                members = members.replace(/BREAK/g, "<br>");
+                members = members.replace(/<br><br>/g, "");
+                formatted_name = '<b>' + name + '</b><br>' + members;
+
+                // All data received, add a row to the Data table
+                data.addRow([
+                    {v: event,    p: {'className': 'left-text'}},
+                    {v: cl,       p: {'className': 'center-text'}},
+                    {v: name,     p: {'className': 'left-text'}, f: formatted_name},
+                    {v: year,     p: {'className': 'center-text'}},
+                    {v: result,   p: {'className': 'right-text'}},
+                    {v: wind,     p: {'className': 'center-text'}},
+                    {v: note,     p: {'className': 'right-text'}},
+                    {v: place,    p: {'className': 'center-text'}},
+                    {v: round,    p: {'className': 'left-text'}},
+                    {v: club,     p: {'className': 'left-text'}},
+                    {v: country,  p: {'className': 'center-text'}},
+                ]);
             }
-            if (place_or_wind.match(/,/)) {
-                wind = place_or_wind;
-            }
-            else if (place_or_wind != '') {
-                place = place_or_wind;
-            }
-            
-            // Add a '+' sign if needed
-            if (wind && ! wind.match(/-/) && ! wind.match(/\+/)) {
-                wind = "+" + wind;
-            }
-            
-            if (event == "Höjdhopp" || event == "Stavhopp") {
-                int_result = parseInt(result);
-                if (int_result) {
-                    result = reformat("" + parseInt(result) / 100);
+
+            // Get result info
+            else if (lines[i].match(/<td align='right' width='25'/)) {
+                //else if (lines[i].match(/class='style2'/)) {
+                var info = lines[i].split(/<\/td>/);
+                var place = remove_html_tags(info[0]);
+                var name = remove_html_tags(info[1]);
+                var year = remove_html_tags(info[2]);
+                if (Number(year) > 30) {
+                    year = "19" + year;
                 }
+                else {
+                    year = "20" + year;
+                }
+                if (info.length == 10) {
+                    // Table includes country
+                    country = remove_html_tags(info[3]);
+                    club = remove_html_tags(info[4]);
+                    result = reformat(remove_html_tags(info[5]));
+                    note = remove_html_tags(info[6]);
+                    place_or_wind = remove_html_tags(info[7]);
+
+                }
+                else {
+                    country = 'SWE';
+                    club = remove_html_tags(info[3]);
+                    result = reformat(remove_html_tags(info[4]));
+                    note = remove_html_tags(info[5]);
+                    place_or_wind = remove_html_tags(info[6]);
+                }
+                if (place_or_wind.match(/,/)) {
+                    wind = place_or_wind;
+                }
+                else if (place_or_wind != '') {
+                    place = place_or_wind;
+                }
+
+                // Add a '+' sign if needed
+                if (wind && ! wind.match(/-/) && ! wind.match(/\+/)) {
+                    wind = "+" + wind;
+                }
+
+                if (event == "Höjdhopp" || event == "Stavhopp") {
+                    int_result = parseInt(result);
+                    if (int_result) {
+                        result = reformat("" + parseInt(result) / 100);
+                    }
+                }
+
+                // All data received, add a row to the Data table
+                data.addRow([
+                    {v: event,    p: {'className': 'left-text'}},
+                    {v: cl,       p: {'className': 'center-text'}},
+                    {v: name,     p: {'className': 'left-text'}},
+                    {v: year,     p: {'className': 'center-text'}},
+                    {v: result,   p: {'className': 'right-text'}},
+                    {v: wind,     p: {'className': 'center-text'}},
+                    {v: note,     p: {'className': 'right-text'}},
+                    {v: place,    p: {'className': 'center-text'}},
+                    {v: round,    p: {'className': 'left-text'}},
+                    {v: club,     p: {'className': 'left-text'}},
+                    {v: country,  p: {'className': 'center-text'}},
+                ]);
             }
-            
-            // All data received, add a row to the Data table 
-            data.addRow([
-                {v: event,    p: {'className': 'left-text'}},
-                {v: cl,       p: {'className': 'center-text'}},
-                {v: name,     p: {'className': 'left-text'}},
-                {v: year,     p: {'className': 'center-text'}},
-                {v: result,   p: {'className': 'right-text'}},
-                {v: wind,     p: {'className': 'center-text'}},
-                {v: note,     p: {'className': 'right-text'}},
-                {v: place,    p: {'className': 'center-text'}},
-                {v: round,    p: {'className': 'left-text'}},
-                {v: club,     p: {'className': 'left-text'}},
-                {v: country,  p: {'className': 'center-text'}},
-            ]);
         }
+        drawDashboard();
     }
-    drawDashboard();
-  }
-  
-  function reformat(result) {
-      result = result.replace(".",",");
-      result = result.replace(":",".")
-      return result;
-  }
-  
-  function get_event_name(event) {
-    // translate the event name to what we use at Hanvikens SK statistics pages
-    
-    // return event; // Uncomment to get the original event name
 
-    // Hurdles events, Needs to be matched before the running events
-    if (event.match(/40m45/))        return '40 meter häck, 45 cm';
-    if (event.match(/40m50/))        return '40 meter häck, 50 cm';
-    if (event.match(/40m55/))        return '40 meter häck, 55 cm';
-    if (event.match(/40m60/))        return '40 meter häck, 60 cm';
-    if (event.match(/50m30/))        return '50 meter häck, 30 cm';
-    if (event.match(/50m50/))        return '50 meter häck, 50 cm';
-    if (event.match(/50m60/))        return '50 meter häck, 60 cm';
-    if (event.match(/60m60/))        return '60 meter häck, 60 cm';
-    if (event.match(/60m68/))        return '60 meter häck, 68,6 cm';
-    if (event.match(/60m76/))        return '60 meter häck, 76,2 cm';
-    if (event.match(/60m84/))        return '60 meter häck, 84,0 cm';
-    if (event.match(/60m91/))        return '60 meter häck, 91,4 cm';
-    if (event.match(/60m99/))        return '60 meter häck, 99,1 cm';
-    if (event.match(/60m100/))       return '60 meter häck, 100,0 cm';
-    if (event.match(/60m107/))       return '60 meter häck, 106,7 cm';
-    if (event.match(/80m76/))        return '80 meter häck, 76,2 cm';
-    if (event.match(/80m84/))        return '80 meter häck, 84,0 cm';
-    if (event.match(/100m76/))       return '100 meter häck, 76,2 cm';
-    if (event.match(/100m84/))       return '100 meter häck, 84,0 cm';
-    if (event.match(/100m91/))       return '100 meter häck, 91,4 cm';
-    if (event.match(/110m100/))      return '110 meter häck, 100,0 cm';
-    if (event.match(/110m107/))      return '110 meter häck, 106,7 cm';
-    if (event.match(/110m91/))       return '110 meter häck, 91,4 cm';
-    if (event.match(/200m68/))       return '200 meter häck, 68,6 cm';
-    if (event.match(/200m76/))       return '200 meter häck, 76,2 cm';
-    if (event.match(/300m76/))       return '300 meter häck, 76,2 cm';
-    if (event.match(/300m84/))       return '300 meter häck, 84,0 cm';
-    if (event.match(/300m91/))       return '300 meter häck, 91,4 cm';
-    if (event.match(/400m76/))       return '400 meter häck, 76,2 cm';
-    if (event.match(/400m91/))       return '400 meter häck, 91,4 cm';
-    if (event.match(/H*ck/))         return event;  // Catch all unknown Hurdle events
+    function reformat(result) {
+        result = result.replace(".",",");
+        result = result.replace(":",".")
+        return result;
+    }
 
-    // Steeplechase events
-    if (event.match(/Hinder 400m/))  return '400 meter hinder';
-    if (event.match(/Hinder 600m/))  return '600 meter hinder';
-    if (event.match(/Hinder 800m/))  return '800 meter hinder';
-    if (event.match(/1000m50/))      return '1.000 meter hinder, 50 cm';
-    if (event.match(/1500m76/))      return '1.500 meter hinder, 76,2 cm';
-    if (event.match(/2000m76/))      return '2.000 meter hinder, 76,2 cm';
-    if (event.match(/2000m91/))      return '2.000 meter hinder, 91,4 cm';
-    if (event.match(/3000m76/))      return '3.000 meter hinder, 76,2 cm';
-    if (event.match(/3000m91/))      return '3.000 meter hinder, 91,4 cm';
-    if (event.match(/Hinder/))       return event; // Catch all unknown Steeplechase events
+    function get_event_name(event) {
+        // translate the event name to what we use at Hanvikens SK statistics pages
 
-    // Relay Events
-    if (event.match(/  /))           return 'Amerikansk stafett 2.000 meter';
-    if (event.match(/3 x 600m/))     return 'Stafett 3x600 meter';
-    if (event.match(/3 x 800m/))     return 'Stafett 3x800 meter';
-    if (event.match(/4 x 100m/))     return 'Stafett 4x100 meter';
-    if (event.match(/4 x 200m/))     return 'Stafett 4x200 meter';
-    if (event.match(/4 x 400m/))     return 'Stafett 4x400 meter';
-    if (event.match(/4 x 80m/))      return 'Stafett 4x80 meter';
-    if (event.match(/5 x 60/))       return 'Stafett 5x60 meter';
-    if (event.match(/6 x 200m/))     return 'Stafett 6x200 meter';
-    if (event.match(/  /))           return 'Svensk stafett 1000 meter';
+        // return event; // Uncomment to get the original event name
 
-    // Running events
-    if (event.match(/40m/))          return '40 meter';
-    if (event.match(/50m/))          return '50 meter';
-    if (event.match(/60m/))          return '60 meter';
-    if (event.match(/80m/))          return '80 meter';
-    if (event.match(/100m/))         return '100 meter';
-    if (event.match(/150m/))         return '150 meter';
-    if (event.match(/200m/))         return '200 meter';
-    if (event.match(/300m/))         return '300 meter';
-    if (event.match(/400m/))         return '400 meter';
-    if (event.match(/600m/))         return '600 meter';
-    if (event.match(/800m/))         return '800 meter';
-    if (event.match(/1000m/))        return '1.000 meter';
-    if (event.match(/  /))           return '1 mile';
-    if (event.match(/1500m/))        return '1.500 meter';
-    if (event.match(/2000m/))        return '2.000 meter';
-    if (event.match(/3000m/))        return '3.000 meter';
-    if (event.match(/5000m/))        return '5.000 meter';
-    if (event.match(/10000m/))       return '10.000 meter';
-    
-    // Jumping events
-    if (event.match(/Höjd/))         return 'Höjdhopp';
-    if (event.match(/Längdzon/))     return 'Längdhopp zon';
-    if (event.match(/Längd/))        return 'Längdhopp';
-    if (event.match(/Stav/))         return 'Stavhopp';
-    if (event.match(/Trestegzon/))   return 'Tresteg zon';
-    if (event.match(/Tresteg/))      return 'Tresteg';
-    
-    // Throwing events
-    if (event.match(/Boll150/))      return 'Boll 150g';
-    if (event.match(/Boll250/))      return 'Boll 250g';
-    if (event.match(/Boll300/))      return 'Boll 300g';
-    if (event.match(/Diskus0.6/))    return 'Diskus 600g';
-    if (event.match(/Diskus0.75/))   return 'Diskus 750g';
-    if (event.match(/Diskus1.0/))    return 'Diskus 1,0 kg';
-    if (event.match(/Diskus1.5/))    return 'Diskus 1,5 kg';
-    if (event.match(/Diskus1.75/))   return 'Diskus 1,75 kg';
-    if (event.match(/Diskus2.0/))    return 'Diskus 2,0 kg';
-    if (event.match(/Kula2.0/))      return 'Kula 2,0 kg';
-    if (event.match(/Kula2.5/))      return 'Kula 2,5 kg';
-    if (event.match(/Kula3.0/))      return 'Kula 3,0 kg';
-    if (event.match(/Kula4.0/))      return 'Kula 4,0 kg';
-    if (event.match(/Kula5.0/))      return 'Kula 5,0 kg';
-    if (event.match(/Kula5.5/))      return 'Kula 5,5 kg';
-    if (event.match(/Kula6.0/))      return 'Kula 6,0 kg';
-    if (event.match(/Kula7.26/))     return 'Kula 7,26 kg';
-    if (event.match(/Slägga0.5/))    return 'Slägga 0,5 kg';
-    if (event.match(/Slägga1.0/))    return 'Slägga 1,0 kg';
-    if (event.match(/Slägga2.0/))    return 'Slägga 2,0 kg';
-    if (event.match(/Slägga3.0/))    return 'Slägga 3,0 kg';
-    if (event.match(/Slägga4.0/))    return 'Slägga 4,0 kg';
-    if (event.match(/Slägga5.0/))    return 'Slägga 5,0 kg';
-    if (event.match(/Slägga6.0/))    return 'Slägga 6,0 kg';
-    if (event.match(/Slägga7.26/))   return 'Slägga 7,26 kg';
-    if (event.match(/Spjut300/))     return 'Spjut 300g';
-    if (event.match(/Spjut400/))     return 'Spjut 400g';
-    if (event.match(/Spjut500/))     return 'Spjut 500g';
-    if (event.match(/Spjut600/))     return 'Spjut 600g';
-    if (event.match(/Spjut700/))     return 'Spjut 700g';
-    if (event.match(/Spjut800/))     return 'Spjut 800g';
-    if (event.match(/  /))           return 'Superkula';
-    if (event.match(/Vikt7/))        return 'Vikt 7,26 kg';
-    if (event.match(/Vikt9/))        return 'Vikt 9,08 kg';
-    if (event.match(/Vikt11/))       return 'Vikt 11,34 kg';
-    if (event.match(/Vikt15/))       return 'Vikt 15,88 kg';
-    if (event.match(/Vortex/))       return 'Vortex';
+        // Hurdles events, Needs to be matched before the running events
+        if (event.match(/40m45/))        return '40 meter häck, 45 cm';
+        if (event.match(/40m50/))        return '40 meter häck, 50 cm';
+        if (event.match(/40m55/))        return '40 meter häck, 55 cm';
+        if (event.match(/40m60/))        return '40 meter häck, 60 cm';
+        if (event.match(/50m30/))        return '50 meter häck, 30 cm';
+        if (event.match(/50m50/))        return '50 meter häck, 50 cm';
+        if (event.match(/50m60/))        return '50 meter häck, 60 cm';
+        if (event.match(/60m60/))        return '60 meter häck, 60 cm';
+        if (event.match(/60m68/))        return '60 meter häck, 68,6 cm';
+        if (event.match(/60m76/))        return '60 meter häck, 76,2 cm';
+        if (event.match(/60m84/))        return '60 meter häck, 84,0 cm';
+        if (event.match(/60m91/))        return '60 meter häck, 91,4 cm';
+        if (event.match(/60m99/))        return '60 meter häck, 99,1 cm';
+        if (event.match(/60m100/))       return '60 meter häck, 100,0 cm';
+        if (event.match(/60m107/))       return '60 meter häck, 106,7 cm';
+        if (event.match(/80m76/))        return '80 meter häck, 76,2 cm';
+        if (event.match(/80m84/))        return '80 meter häck, 84,0 cm';
+        if (event.match(/100m76/))       return '100 meter häck, 76,2 cm';
+        if (event.match(/100m84/))       return '100 meter häck, 84,0 cm';
+        if (event.match(/100m91/))       return '100 meter häck, 91,4 cm';
+        if (event.match(/110m100/))      return '110 meter häck, 100,0 cm';
+        if (event.match(/110m107/))      return '110 meter häck, 106,7 cm';
+        if (event.match(/110m91/))       return '110 meter häck, 91,4 cm';
+        if (event.match(/200m68/))       return '200 meter häck, 68,6 cm';
+        if (event.match(/200m76/))       return '200 meter häck, 76,2 cm';
+        if (event.match(/300m76/))       return '300 meter häck, 76,2 cm';
+        if (event.match(/300m84/))       return '300 meter häck, 84,0 cm';
+        if (event.match(/300m91/))       return '300 meter häck, 91,4 cm';
+        if (event.match(/400m76/))       return '400 meter häck, 76,2 cm';
+        if (event.match(/400m91/))       return '400 meter häck, 91,4 cm';
+        if (event.match(/H*ck/))         return event;  // Catch all unknown Hurdle events
 
-    // Multi events
-    if (event.match(/  /))           return 'Mångkamp';
-    if (event.match(/  /))           return '3-kamp';
-    if (event.match(/  /))           return '4-kamp';
-    if (event.match(/  /))           return '5-kamp';
-    if (event.match(/  /))           return '6-kamp';
-    if (event.match(/  /))           return '7-kamp';
-    if (event.match(/  /))           return '8-kamp';
-    if (event.match(/  /))           return '10-kamp';
-    
-    // Catch everything we do not match
-    return event;
-  }
-  
-  function remove_html_tags(html) {
-     var tmp = document.createElement("DIV");
-     tmp.innerHTML = html;
-     return tmp.textContent.trim() || tmp.innerText.trim();
-  }
-  
-  function drawDashboard() {
-    var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+        // Steeplechase events
+        if (event.match(/Hinder 400m/))  return '400 meter hinder';
+        if (event.match(/Hinder 600m/))  return '600 meter hinder';
+        if (event.match(/Hinder 800m/))  return '800 meter hinder';
+        if (event.match(/1000m50/))      return '1.000 meter hinder, 50 cm';
+        if (event.match(/1500m76/))      return '1.500 meter hinder, 76,2 cm';
+        if (event.match(/2000m76/))      return '2.000 meter hinder, 76,2 cm';
+        if (event.match(/2000m91/))      return '2.000 meter hinder, 91,4 cm';
+        if (event.match(/3000m76/))      return '3.000 meter hinder, 76,2 cm';
+        if (event.match(/3000m91/))      return '3.000 meter hinder, 91,4 cm';
+        if (event.match(/Hinder/))       return event; // Catch all unknown Steeplechase events
 
-    var eventFilter = filter('event_filter', 0, 'events');
-    var classFilter = filter('class_filter', 1, 'classes');  
-    var nameFilter = filter('name_filter', 2, 'names');
-    var yearFilter = filter('year_filter', 3, 'years');
-  
-    var clubFilter = filter('club_filter', 9, 'clubs');
-    var countryFilter = filter('country_filter', 10, 'countries');
+        // Relay Events
+        if (event.match(/  /))           return 'Amerikansk stafett 2.000 meter';
+        if (event.match(/3 x 600m/))     return 'Stafett 3x600 meter';
+        if (event.match(/3 x 800m/))     return 'Stafett 3x800 meter';
+        if (event.match(/4 x 100m/))     return 'Stafett 4x100 meter';
+        if (event.match(/4 x 200m/))     return 'Stafett 4x200 meter';
+        if (event.match(/4 x 400m/))     return 'Stafett 4x400 meter';
+        if (event.match(/4 x 80m/))      return 'Stafett 4x80 meter';
+        if (event.match(/5 x 60/))       return 'Stafett 5x60 meter';
+        if (event.match(/6 x 200m/))     return 'Stafett 6x200 meter';
+        if (event.match(/  /))           return 'Svensk stafett 1000 meter';
 
-    var resultTable = new google.visualization.ChartWrapper({
-          'chartType': 'Table',
-          'containerId': 'table_div',
-          'options': { allowHtml: true, showRowNumber: false, width: '100%', height: '100%' }
+        // Running events
+        if (event.match(/40m/))          return '40 meter';
+        if (event.match(/50m/))          return '50 meter';
+        if (event.match(/60m/))          return '60 meter';
+        if (event.match(/80m/))          return '80 meter';
+        if (event.match(/100m/))         return '100 meter';
+        if (event.match(/150m/))         return '150 meter';
+        if (event.match(/200m/))         return '200 meter';
+        if (event.match(/300m/))         return '300 meter';
+        if (event.match(/400m/))         return '400 meter';
+        if (event.match(/600m/))         return '600 meter';
+        if (event.match(/800m/))         return '800 meter';
+        if (event.match(/1000m/))        return '1.000 meter';
+        if (event.match(/  /))           return '1 mile';
+        if (event.match(/1500m/))        return '1.500 meter';
+        if (event.match(/2000m/))        return '2.000 meter';
+        if (event.match(/3000m/))        return '3.000 meter';
+        if (event.match(/5000m/))        return '5.000 meter';
+        if (event.match(/10000m/))       return '10.000 meter';
+
+        // Jumping events
+        if (event.match(/Höjd/))         return 'Höjdhopp';
+        if (event.match(/Längdzon/))     return 'Längdhopp zon';
+        if (event.match(/Längd/))        return 'Längdhopp';
+        if (event.match(/Stav/))         return 'Stavhopp';
+        if (event.match(/Trestegzon/))   return 'Tresteg zon';
+        if (event.match(/Tresteg/))      return 'Tresteg';
+
+        // Throwing events
+        if (event.match(/Boll150/))      return 'Boll 150g';
+        if (event.match(/Boll250/))      return 'Boll 250g';
+        if (event.match(/Boll300/))      return 'Boll 300g';
+        if (event.match(/Diskus0.6/))    return 'Diskus 600g';
+        if (event.match(/Diskus0.75/))   return 'Diskus 750g';
+        if (event.match(/Diskus1.0/))    return 'Diskus 1,0 kg';
+        if (event.match(/Diskus1.5/))    return 'Diskus 1,5 kg';
+        if (event.match(/Diskus1.75/))   return 'Diskus 1,75 kg';
+        if (event.match(/Diskus2.0/))    return 'Diskus 2,0 kg';
+        if (event.match(/Kula2.0/))      return 'Kula 2,0 kg';
+        if (event.match(/Kula2.5/))      return 'Kula 2,5 kg';
+        if (event.match(/Kula3.0/))      return 'Kula 3,0 kg';
+        if (event.match(/Kula4.0/))      return 'Kula 4,0 kg';
+        if (event.match(/Kula5.0/))      return 'Kula 5,0 kg';
+        if (event.match(/Kula5.5/))      return 'Kula 5,5 kg';
+        if (event.match(/Kula6.0/))      return 'Kula 6,0 kg';
+        if (event.match(/Kula7.26/))     return 'Kula 7,26 kg';
+        if (event.match(/Slägga0.5/))    return 'Slägga 0,5 kg';
+        if (event.match(/Slägga1.0/))    return 'Slägga 1,0 kg';
+        if (event.match(/Slägga2.0/))    return 'Slägga 2,0 kg';
+        if (event.match(/Slägga3.0/))    return 'Slägga 3,0 kg';
+        if (event.match(/Slägga4.0/))    return 'Slägga 4,0 kg';
+        if (event.match(/Slägga5.0/))    return 'Slägga 5,0 kg';
+        if (event.match(/Slägga6.0/))    return 'Slägga 6,0 kg';
+        if (event.match(/Slägga7.26/))   return 'Slägga 7,26 kg';
+        if (event.match(/Spjut300/))     return 'Spjut 300g';
+        if (event.match(/Spjut400/))     return 'Spjut 400g';
+        if (event.match(/Spjut500/))     return 'Spjut 500g';
+        if (event.match(/Spjut600/))     return 'Spjut 600g';
+        if (event.match(/Spjut700/))     return 'Spjut 700g';
+        if (event.match(/Spjut800/))     return 'Spjut 800g';
+        if (event.match(/  /))           return 'Superkula';
+        if (event.match(/Vikt7/))        return 'Vikt 7,26 kg';
+        if (event.match(/Vikt9/))        return 'Vikt 9,08 kg';
+        if (event.match(/Vikt11/))       return 'Vikt 11,34 kg';
+        if (event.match(/Vikt15/))       return 'Vikt 15,88 kg';
+        if (event.match(/Vortex/))       return 'Vortex';
+
+        // Multi events
+        if (event.match(/  /))           return 'Mångkamp';
+        if (event.match(/  /))           return '3-kamp';
+        if (event.match(/  /))           return '4-kamp';
+        if (event.match(/  /))           return '5-kamp';
+        if (event.match(/  /))           return '6-kamp';
+        if (event.match(/  /))           return '7-kamp';
+        if (event.match(/  /))           return '8-kamp';
+        if (event.match(/  /))           return '10-kamp';
+
+        // Catch everything we do not match
+        return event;
+    }
+
+    function remove_html_tags(html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent.trim() || tmp.innerText.trim();
+    }
+
+    function drawDashboard() {
+        var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+
+        var eventFilter = filter('event_filter', 0, 'events');
+        var classFilter = filter('class_filter', 1, 'classes');
+        var nameFilter = filter('name_filter', 2, 'names');
+        var yearFilter = filter('year_filter', 3, 'years');
+
+        var clubFilter = filter('club_filter', 9, 'clubs');
+        var countryFilter = filter('country_filter', 10, 'countries');
+
+        var resultTable = new google.visualization.ChartWrapper({
+            'chartType': 'Table',
+            'containerId': 'table_div',
+            'options': { allowHtml: true, showRowNumber: false, width: '100%', height: '100%' }
         });
 
-    dashboard.bind(classFilter, [eventFilter, countryFilter, clubFilter, yearFilter, nameFilter]);
-    dashboard.bind(eventFilter, [countryFilter, clubFilter, yearFilter, nameFilter]);
-    dashboard.bind(countryFilter,[clubFilter, yearFilter, nameFilter]);
-    dashboard.bind(clubFilter, [yearFilter, nameFilter]);
-    dashboard.bind(yearFilter, [nameFilter]); 
-  
-    dashboard.bind([classFilter, eventFilter, countryFilter, clubFilter, yearFilter, nameFilter], resultTable); 
-    dashboard.draw(data);
-    
-    google.visualization.events.addListener(dashboard, 'ready', function() {
-        storeFilter(classFilter, 'classes');
-        storeFilter(eventFilter, 'events');
-        storeFilter(clubFilter, 'clubs');
-        storeFilter(countryFilter, 'countries');
-        storeFilter(nameFilter, 'names');
-        storeFilter(nameFilter, 'years');
-    });   
-  }
+        dashboard.bind(classFilter, [eventFilter, countryFilter, clubFilter, yearFilter, nameFilter]);
+        dashboard.bind(eventFilter, [countryFilter, clubFilter, yearFilter, nameFilter]);
+        dashboard.bind(countryFilter,[clubFilter, yearFilter, nameFilter]);
+        dashboard.bind(clubFilter, [yearFilter, nameFilter]);
+        dashboard.bind(yearFilter, [nameFilter]);
 
-  </script>
+        dashboard.bind([classFilter, eventFilter, countryFilter, clubFilter, yearFilter, nameFilter], resultTable);
+        dashboard.draw(data);
+
+        google.visualization.events.addListener(dashboard, 'ready', function() {
+            storeFilter(classFilter, 'classes');
+            storeFilter(eventFilter, 'events');
+            storeFilter(clubFilter, 'clubs');
+            storeFilter(countryFilter, 'countries');
+            storeFilter(nameFilter, 'names');
+            storeFilter(nameFilter, 'years');
+        });
+    }
+
+    </script>
 </head>
 
 <html>
-  <body onload="myMenu()">
+<body onload="myMenu()">
     <div id="menu"></div>
     <div class="w3-container w3-round-large w3-light-grey w3-margin w3-center">
-      <h3 id="page_header">Tävlingsresultat</h3>
+        <h3 id="page_header">Tävlingsresultat</h3>
     </div>
 
     <div class="w3-container w3-round-large w3-light-grey w3-margin">
-      <p></p>
-      <div id="dashboard_div">
         <p></p>
-        <table width="90%" align="center">
-          <tr valign="top">
-            <td>Klass:</td><td><div id="class_filter"></div></td>
-            <td>Gren:</td><td><div id="event_filter"></div></td>
-            <td>Land:</td><td><div id="country_filter"></div></td>
-          </tr>
-          <tr valign="top">
-            <td>Klubb:</td><td><div id="club_filter"></div></td>
-            <td>Född:</td><td><div id="year_filter"></div></td>
-            <td>Namn:</td><td><div id="name_filter"></div></td>
-          </tr>
-        </table>
-        <p></p>
-        <div id="table_div" class="w3-center"><p><i class="fa fa-spinner w3-spin" style="font-size:64px"></i></p></div>
-        <p></p>
-      </div>
+        <div id="dashboard_div">
+            <p></p>
+            <table width="90%" align="center">
+                <tr valign="top">
+                    <td>Klass:</td><td><div id="class_filter"></div></td>
+                    <td>Gren:</td><td><div id="event_filter"></div></td>
+                    <td>Land:</td><td><div id="country_filter"></div></td>
+                </tr>
+                <tr valign="top">
+                    <td>Klubb:</td><td><div id="club_filter"></div></td>
+                    <td>Född:</td><td><div id="year_filter"></div></td>
+                    <td>Namn:</td><td><div id="name_filter"></div></td>
+                </tr>
+            </table>
+            <p></p>
+            <div id="table_div" class="w3-center"><p><i class="fa fa-spinner w3-spin" style="font-size:64px"></i></p></div>
+            <p></p>
+        </div>
     </div>
     <div class="w3-container w3-round-large w3-light-grey w3-margin">
-    <p></p>
-      <div id="info_div" class="w3-center">
-        Drag knappen nedan till bokmärkesfältet. Använd sedan bokmärket för att konvertera resultat från <a href="http://www.trackandfield.se/">Track and fields</a> resultatlistor.<p></p>
-        <a href="javascript:location.href='http://friidrott.niklassons.net/results.html?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title)"><img border="0" alt="Hämta resultat!" src="images/button_hamta-resultat.gif"></a>
-      </div>
-    <p></p>
+        <p></p>
+        <div id="info_div" class="w3-center">
+            Drag knappen nedan till bokmärkesfältet. Använd sedan bokmärket för att konvertera resultat från <a href="http://www.trackandfield.se/">Track and fields</a> resultatlistor.<p></p>
+            <a href="javascript:location.href='http://friidrott.niklassons.net/results.html?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title)"><img border="0" alt="Hämta resultat!" src="images/button_hamta-resultat.gif"></a>
+        </div>
+        <p></p>
     </div>
-  </body>
+</body>
 </html>
-
