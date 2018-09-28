@@ -35,38 +35,36 @@
         <p></p>
         <center>
             <table border="0" cellpadding="2" cellspacing="0" width=320px>
-	            <tr>
-		            <td><b>Gren</b></td>
-		            <td><b>Resultat</b></td>
-		            <td align="right"><b>Poäng</b></td>
-	           </tr>
-	           <tr>
-		            <td>Kula [m]:</td>
-		            <td><input type="number" id="mark_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'SP', this.value)" /></td>
-		            <td align="right"><div id="points_SP"></div></td>
-	           </tr>
-	           <tr>
-		            <td>Diskus [m]:</td>
-		            <td><input type="number" id="mark_DT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'DT', this.value)" /></td>
-		            <td align="right"><div id="points_DT"></div></td>
-	           </tr>
-	           <tr>
-		            <td>Spjut [m]:</td>
-		            <td><input type="number" id="mark_JT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'JT', this.value)" /></td>
-		            <td align="right"><div id="points_JT"></div></td>
-	           </tr>
-	           <tr>
-		            <td>Slägga [m]:</td>
-		            <td><input type="number" id="mark_HT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'HT', this.value)" /></td>
-		            <td align="right"><div id="points_HT"></div></td>
-	           </tr>
-	           <tr>
-		            <td><p></p></td>
-	           </tr>
-	           <tr>
-		            <td colspan="2" align="left"><b>Totalpoäng:</b></td>
-		            <td align="right"><b><div id="points_total"></b></div></td>
-	           </tr>
+                <tr>
+                    <td><b>Gren</b></td>
+                    <td><b>Resultat</b></td>
+                    <td align="right"><b>Poäng</b></td>
+                </tr>
+                <tr>
+                    <td>Kula [m]:</td>
+                    <td><input type="number" id="mark_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'SP', this.value)" /></td>
+                    <td align="right"><div id="points_SP"></div></td>
+                </tr>
+                <tr>
+                    <td>Diskus [m]:</td>
+                    <td><input type="number" id="mark_DT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'DT', this.value)" /></td>
+                    <td align="right"><div id="points_DT"></div></td>
+                </tr>
+                <tr>
+                <td>Spjut [m]:</td>
+                    <td><input type="number" id="mark_JT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'JT', this.value)" /></td>
+                    <td align="right"><div id="points_JT"></div></td>
+                </tr>
+                <tr>
+                    <td>Slägga [m]:</td>
+                    <td><input type="number" id="mark_HT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'HT', this.value)" /></td>
+                    <td align="right"><div id="points_HT"></div></td>
+                </tr>
+                <tr><td><p></p></td></tr>
+                <tr>
+                    <td colspan="2" align="left"><b>Totalpoäng:</b></td>
+                    <td align="right"><b><div id="points_total"></b></div></td>
+                </tr>
             </table>
             <input type="button" onClick="clean('m_cast')" value="Rensa">
         </center>
