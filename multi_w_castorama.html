@@ -2,7 +2,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Friidrott - Mångkamp - Män Castorama</title>
+    <title>Friidrott - Mångkamp - Kvinnor Castorama</title>
     <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -16,18 +16,18 @@
     <link rel="stylesheet" href="includes/athletics-sweden.css">
     
     <script type="text/javascript">
-        init('m_cast');
+        init('w_cast');
     </script>
 
 </head>
 
 <html>
-<body onload="menu('m_cast')">
+<body onload="menu('w_cast')">
     <div id="menu"></div>
 
     <header class="w3-display-container w3-red w3-top" style="height:60px;width:100%">
         <div class="w3-padding w3-display-left"><img src="images/hanviken-rund.jpg" class="w3-circle" style="width:50px;height:50px;"></div>
-        <div class="w3-padding w3-display-middle"><h4><center>Män Castorama</center></h4></div>
+        <div class="w3-padding w3-display-middle"><h4><center>Kvinnor Castorama</center></h4></div>
         <div class="w3-padding w3-display-right"><h3><i class="w3-opennav fa fa-bars" onclick="w3_open()"></i></h3></div>
     </header>
 
@@ -42,22 +42,22 @@
                 </tr>
                 <tr>
                     <td>Kula [m]:</td>
-                    <td><input type="number" id="mark_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'SP', this.value)" /></td>
+                    <td><input type="number" id="mark_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('w_cast', 'SP', this.value)" /></td>
                     <td align="right"><div id="points_SP"></div></td>
                 </tr>
                 <tr>
                     <td>Diskus [m]:</td>
-                    <td><input type="number" id="mark_DT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'DT', this.value)" /></td>
+                    <td><input type="number" id="mark_DT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('w_cast', 'DT', this.value)" /></td>
                     <td align="right"><div id="points_DT"></div></td>
                 </tr>
                 <tr>
                 <td>Spjut [m]:</td>
-                    <td><input type="number" id="mark_JT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'JT', this.value)" /></td>
+                    <td><input type="number" id="mark_JT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('w_cast', 'JT', this.value)" /></td>
                     <td align="right"><div id="points_JT"></div></td>
                 </tr>
                 <tr>
                     <td>Slägga [m]:</td>
-                    <td><input type="number" id="mark_HT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('m_cast', 'HT', this.value)" /></td>
+                    <td><input type="number" id="mark_HT" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('w_cast', 'HT', this.value)" /></td>
                     <td align="right"><div id="points_HT"></div></td>
                 </tr>
                 <tr><td><p></p></td></tr>
@@ -66,7 +66,7 @@
                     <td align="right"><b><div id="points_total"></b></div></td>
                 </tr>
             </table>
-            <input type="button" onClick="clean('m_cast')" value="Rensa">
+            <input type="button" onClick="clean('w_cast')" value="Rensa">
         </center>
         <p></p>
     </div>
