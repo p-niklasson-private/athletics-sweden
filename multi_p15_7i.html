@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Friidrott - Mångkamp - P15 7-kamp inomhus</title>
+    <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="includes/athletics-sweden-multi.js"></script>
+    <script type="text/javascript" src="includes/ydn.db-is-core-qry.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3-theme-red.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="includes/athletics-sweden.css">
+</head>
+
+<html>
+<body onload="menu('p15_7i')">
+    <div id="menu"></div>
+
+    <header class="w3-display-container w3-red w3-top" style="height:60px;width:100%">
+        <div class="w3-padding w3-display-left"><img src="images/hanviken-rund.jpg" class="w3-circle" style="width:50px;height:50px;"></div>
+        <div class="w3-padding w3-display-middle"><h4><center>P15 7-kamp (i)</center></h4></div>
+        <div class="w3-padding w3-display-right"><h3><i class="w3-opennav fa fa-bars" onclick="w3_open()"></i></h3></div>
+    </header>
+
+    <div class="w3-container w3-round-large w3-light-grey w3-margin">
+        <p></p>
+        <center>
+            <table border="0" cellpadding="2" cellspacing="0" width=320px>
+	            <tr>
+		            <td><b>Gren</b></td>
+		            <td><b>Resultat</b></td>
+		            <td align="right"><b>Poäng</b></td>
+	           </tr>
+	           <tr>
+		            <td>60 meter [s]:</td>
+		            <td><input type="number" id="mark_p15_7i_60" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_60"></div></td>
+	           </tr>
+	           <tr>
+		            <td>Stavhopp [m]:</td>
+		            <td><input type="number" id="mark_p15_7i_PV" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'PV', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_PV"></div></td>
+	           </tr>
+	           <tr>
+		            <td>Längdhopp [m]:</td>
+		            <td><input type="number" id="mark_p15_7i_LJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'LJ', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_LJ"></div></td>
+	           </tr>
+	           <tr>
+	               <td><p></p></td>
+	           </tr>
+	           <tr>
+		            <td>60 m häck [s]:</td>
+		            <td><input type="number" id="mark_p15_7i_60H" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60H', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_60H"></div></td>
+	           </tr>
+	           <tr>
+		            <td>Höjdhopp [m]:</td>
+		            <td><input type="number" id="mark_p15_7i_HJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'HJ', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_HJ"></div></td>
+	           </tr>
+	           <tr>
+		            <td>Kula [m]:</td>
+		            <td><input type="number" id="mark_p15_7i_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'SP', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_SP"></div></td>
+	           </tr>
+
+	           <tr>
+		            <td>600 meter [s]:</td>
+		            <td><input type="number" id="mark_p15_7i_600" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '600', this.value)" /></td>
+		            <td align="right"><div id="p15_7i_600"></div></td>
+	           </tr>
+	           <tr>
+		            <td><p></p></td>
+	           </tr>
+	           <tr>
+		            <td colspan="2" align="left"><b>Totalpoäng:</b></td>
+		            <td align="right"><b><div id="p15_7i_total"></b></div></td>
+	           </tr>
+            </table>
+            <input type="button" onClick="clean('p15_7i')" value="Rensa">
+        </center>
+        <p></p>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    init('p15_7i');
+</script>
