@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3-theme-red.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="includes/athletics-sweden.css">
+    
+    <script type="text/javascript">
+        init('p15_7i');
+    </script>
+
 </head>
 
 <html>
@@ -37,49 +42,49 @@
 	           </tr>
 	           <tr>
 		            <td>60 meter [s]:</td>
-		            <td><input type="number" id="mark_p15_7i_60" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_60"></div></td>
+		            <td><input type="number" id="mark_60" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60', this.value)" /></td>
+		            <td align="right"><div id="points_60"></div></td>
 	           </tr>
 	           <tr>
 		            <td>Stavhopp [m]:</td>
-		            <td><input type="number" id="mark_p15_7i_PV" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'PV', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_PV"></div></td>
+		            <td><input type="number" id="mark_PV" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'PV', this.value)" /></td>
+		            <td align="right"><div id="points_PV"></div></td>
 	           </tr>
 	           <tr>
 		            <td>Längdhopp [m]:</td>
-		            <td><input type="number" id="mark_p15_7i_LJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'LJ', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_LJ"></div></td>
+		            <td><input type="number" id="mark_LJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'LJ', this.value)" /></td>
+		            <td align="right"><div id="points_LJ"></div></td>
 	           </tr>
 	           <tr>
 	               <td><p></p></td>
 	           </tr>
 	           <tr>
 		            <td>60 m häck [s]:</td>
-		            <td><input type="number" id="mark_p15_7i_60H" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60H', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_60H"></div></td>
+		            <td><input type="number" id="mark_60H" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '60H', this.value)" /></td>
+		            <td align="right"><div id="points_60H"></div></td>
 	           </tr>
 	           <tr>
 		            <td>Höjdhopp [m]:</td>
-		            <td><input type="number" id="mark_p15_7i_HJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'HJ', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_HJ"></div></td>
+		            <td><input type="number" id="mark_HJ" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'HJ', this.value)" /></td>
+		            <td align="right"><div id="points_HJ"></div></td>
 	           </tr>
 	           <tr>
 		            <td>Kula [m]:</td>
-		            <td><input type="number" id="mark_p15_7i_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'SP', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_SP"></div></td>
+		            <td><input type="number" id="mark_SP" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', 'SP', this.value)" /></td>
+		            <td align="right"><div id="points_SP"></div></td>
 	           </tr>
 
 	           <tr>
 		            <td>600 meter [s]:</td>
-		            <td><input type="number" id="mark_p15_7i_600" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '600', this.value)" /></td>
-		            <td align="right"><div id="p15_7i_600"></div></td>
+		            <td><input type="number" id="mark_600" class="right-text" min="0.0" max="999.99" step="0.01" onchange="calculateScoring('p15_7i', '600', this.value)" /></td>
+		            <td align="right"><div id="points_600"></div></td>
 	           </tr>
 	           <tr>
 		            <td><p></p></td>
 	           </tr>
 	           <tr>
 		            <td colspan="2" align="left"><b>Totalpoäng:</b></td>
-		            <td align="right"><b><div id="p15_7i_total"></b></div></td>
+		            <td align="right"><b><div id="points_total"></b></div></td>
 	           </tr>
             </table>
             <input type="button" onClick="clean('p15_7i')" value="Rensa">
@@ -88,7 +93,3 @@
     </div>
 </body>
 </html>
-
-<script type="text/javascript">
-    init('p15_7i');
-</script>

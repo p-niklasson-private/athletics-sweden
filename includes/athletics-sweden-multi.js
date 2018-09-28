@@ -45,74 +45,92 @@ function menu(active) {
     document.getElementById('menu').innerHTML = menuString;
 }
 
+function dbStoreResults(combinedEvent, results) {
+    console.log("Storing new data for '" + combinedEvent + "' in indexedDB Storage:");
+	console.log(results);
+    var db = new ydn.db.Storage('athletics-sweden-multi');
+    db.put('athletics-sweden-multi', results, combinedEvent);
+}
+
 function init(combinedEvent) {
-    if (localStorage) {
-        var eventsArray = getSubEvents(combinedEvent);
-	    for (var i = 0; i < eventsArray.length; i++) {
-	        var subEvent = eventsArray[i];
-	        var name = 'mark_' + combinedEvent + '_' + subEvent;
-	        var mark = localStorage.getItem(name);
-            if (mark) {
-                document.getElementById(name).value = mark;
-                calculateScoring(combinedEvent, subEvent, mark);
-            }
+    // Fetch data from the indexedDB
+    var db = new ydn.db.Storage('athletics-sweden-multi');
+    var req = db.get('athletics-sweden-multi', combinedEvent);
+    req.done(function(results) {
+        if (! results) {
+            results = {};
+        }
+        finished(combinedEvent, results);
+    });
+    req.fail(function(e) {
+        console.log(e.message);
+    });
+}
+
+function finished(combinedEvent, results) {
+    var eventsArray = getSubEvents(combinedEvent);
+	for (var i = 0; i < eventsArray.length; i++) {
+	    var subEvent = eventsArray[i];
+	    var name = 'mark_' + subEvent;
+	    var mark = results[subEvent];
+	    if (mark) {
+            document.getElementById(name).value = mark;
+            calculateScoring(combinedEvent, subEvent, mark);
 	    }
+        else {
+            results[subEvent] = '';
+        }
 	}
+	dbStoreResults(combinedEvent, results);
 }
 
 function clean(combinedEvent) {
-    if (localStorage) {
-        var eventsArray = getSubEvents(combinedEvent);
-	    for (var i = 0; i < eventsArray.length; i++) {
-	        var subEvent = eventsArray[i];
-	        var name = 'mark_' + combinedEvent + '_' + subEvent;
-	        localStorage.setItem(name,'');
-            document.getElementById(name).value = '';
-            calculateScoring(combinedEvent, subEvent, '');
+    var results = {};
+    var eventsArray = getSubEvents(combinedEvent);
+    for (var i = 0; i < eventsArray.length; i++) {
+        var subEvent = eventsArray[i];
+        var name = 'mark_' + subEvent;
+        document.getElementById(name).value = '';
+        results[subEvent] = '';
+        calculateScoring(combinedEvent, subEvent, '');
+	}
+	dbStoreResults(combinedEvent, results);
+}
+
+function calculateScoring(combinedEvent, subEvent, mark) {
+    // Fetch data from the indexedDB
+    var db = new ydn.db.Storage('athletics-sweden-multi');
+    var req = db.get('athletics-sweden-multi', combinedEvent);
+    req.done(function(results) {
+	    if (mark != '') {
+		    document.getElementById('points_' + subEvent).innerHTML = doCalculation(combinedEvent.charAt(0), subEvent, mark);
+		    document.getElementById('points_total').innerHTML = getTotalPts(combinedEvent);
+            results[subEvent] = mark;
 	    }
-	}
+	    else
+	    {
+		    document.getElementById('points_' + subEvent).innerHTML = '';
+		    document.getElementById('points_total').innerHTML = getTotalPts(combinedEvent);
+		    results[subEvent] = '';
+	    }
+	    dbStoreResults(combinedEvent, results);
+    });
 }
 
-function calculateScoring(combinedEvent, subEvent, mark)
-{
-	if (mark != '') {
-		document.getElementById(combinedEvent + '_' + subEvent).innerHTML = doCalculation(combinedEvent.charAt(0), subEvent, mark);
-		document.getElementById(combinedEvent + '_total').innerHTML = getTotalPts(combinedEvent);
-		if (localStorage) {
-            localStorage.setItem('mark_' + combinedEvent + '_' + subEvent, mark);
-		}
-	}
-	else
-	{
-		document.getElementById(combinedEvent + '_' + subEvent).innerHTML = '';
-		document.getElementById(combinedEvent + '_total').innerHTML = getTotalPts(combinedEvent);
-		if (localStorage) {
-            localStorage.setItem('mark_' + combinedEvent + '_' + subEvent, '');
-		}
-	}
-}
-
-
-// ---------------
-
-
-function getTotalPts(combinedEvent)
-{
+function getTotalPts(combinedEvent) {
 	var totalPts = 0;
 	var eventsArray = getSubEvents(combinedEvent);
 	
 	for (var i = 0; i < eventsArray.length; i++)
 	{
-		if (document.getElementById(combinedEvent + '_' + eventsArray[i]).innerHTML)
-			totalPts += parseInt(document.getElementById(combinedEvent + '_' + eventsArray[i]).innerHTML);
+		if (document.getElementById('points_' + eventsArray[i]).innerHTML)
+			totalPts += parseInt(document.getElementById('points_' + eventsArray[i]).innerHTML);
 	}
 	
 	return totalPts;
 }
 
-
-function getSubEvents(combinedEvent)
-{
+function getSubEvents(combinedEvent) {
 	var eventsArray;
 	
 	switch (combinedEvent)
@@ -159,12 +177,7 @@ function getSubEvents(combinedEvent)
 	return eventsArray;
 }
 
-
-// ---------------
-
-
-function doCalculation(sex, eventName, mark)
-{
+function doCalculation(sex, eventName, mark) {
 	var a, b, c;
 	
 	if (sex == 'm' || sex == 'p')
@@ -399,12 +412,7 @@ function doCalculation(sex, eventName, mark)
 		return null;
 }
 
-
-// ---------------
-
-
-function calculateRunning(mark, a, b, c)
-{
+function calculateRunning(mark, a, b, c) {
     var points = Math.floor(a * Math.pow(b - mark, c));
     if ( isNaN(points) ) {
         return 0;
@@ -415,8 +423,7 @@ function calculateRunning(mark, a, b, c)
 }
 
 
-function calculateField(mark, a, b, c)
-{
+function calculateField(mark, a, b, c) {
 	var points = Math.floor(a * Math.pow(mark - b, c));
     if ( isNaN(points) ) {
         return 0;
@@ -426,12 +433,7 @@ function calculateField(mark, a, b, c)
     }	
 }
 
-
-// ---------------
-
-
-function getSeconds(mark)
-{
+function getSeconds(mark) {
 	var i;
 	var mySeconds = 0;
 	var tempTime = StrReverse(mark);
@@ -443,39 +445,16 @@ function getSeconds(mark)
 	return mySeconds;
 }
 
-
-function getMeters(mark)
-{
+function getMeters(mark) {
 	return mark;
 }
 
 
-function getCentimeters(mark)
-{
+function getCentimeters(mark) {
 	return mark * 100;
 }
 
-
-// ---------------
-
-
-function isValidMetricMark(mark)
-{
-	return (/^[0-9]{1,3}(\.[0-9]{1,2}){0,1}$/).test(mark);
-}
-
-
-function isValidTime(mark)
-{
-	return (/(^([0-9]{1,2}\:){0,1}[0-9]{2}(\.[0-9]{1,2}){0,1}$)|(^[0-9]{1,2}(\.[0-9]{1,2}){0,1}$)/).test(mark);
-}
-
-
-// ---------------
-
-
-function StrReverse(str)
-{
+function StrReverse(str) {
 	if (! str)
 		return '';
 	else
