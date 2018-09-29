@@ -15,34 +15,58 @@ function option(item, active) {
     }
 }
 
-function menu(active) {
+function menu(active, title) {
+    header(title);
     var menuString =
-    '<nav class="w3-sidenav w3-card-2 w3-white w3-top" style="width:250px;display:none;right:0;z-index:2" id="sidenav">' +
+    '<nav class="w3-sidenav w3-card-2 w3-white w3-top" style="width:200px;display:none;right:0;z-index:2" id="sidenav">' +
         '<div class="w3-container w3-theme-d2">' +
             '<span onclick="w3_close()" class="w3-closenav w3-right w3-xlarge"><i class="fa fa-close"></i></span>' +
         '</div>' +
         '<br>' +
-        '<a ' + option('m_start', active)  + ' href="multi.html"><i class="fa fa-trophy"></i> Mångkamp -Startsida</a>' +
-        '<a href="#">------------------------------</a>' +
-        '<a ' + option('m_10', active)     + ' href="multi_m_10.html"><i class="fa fa-male"></i> Män 10-kamp</a>' +
-        '<a ' + option('m_cast', active)   + ' href="multi_m_castorama.html"><i class="fa fa-male"></i> Män Castorama</a>' +
-        '<a ' + option('p17_10', active)   + ' href="multi_p17_10.html"><i class="fa fa-male"></i> P17 10-kamp</a>' +
-        '<a ' + option('p15_8', active)    + ' href="multi_p15_8.html"><i class="fa fa-male"></i> P15 8-kamp</a>' +
-        '<a href="#">------------------------------</a>' +
-        '<a ' + option('m_7i', active)     + ' href="multi_m_7i.html"><i class="fa fa-male"></i> Män 7-kamp (i)</a>' +
-        '<a ' + option('p17_7i', active)   + ' href="multi_p17_7i.html"><i class="fa fa-male"></i> P17 7-kamp (i)</a>' +
-        '<a ' + option('p15_7i', active)   + ' href="multi_p15_7i.html"><i class="fa fa-male"></i> P15 7-kamp (i)</a>' +
-        '<a href="#">------------------------------</a>' +
-        '<a ' + option('w_7', active)      + ' href="multi_w_7.html"><i class="fa fa-female"></i> Kvinnor 7-kamp</a>' +
-        '<a ' + option('w_cast', active)   + ' href="multi_w_castorama.html"><i class="fa fa-female"></i> Kvinnor Castorama</a>' +
-        '<a ' + option('f15_6', active)    + ' href="multi_f15_6.html"><i class="fa fa-female"></i> F15 6-kamp</a>' +
-        '<a href="#">------------------------------</a>' +
-        '<a ' + option('w_5i', active)     + ' href="multi_w_5i.html"><i class="fa fa-female"></i> Kvinnor 5-kamp (i)</a>' +
-        '<a ' + option('f17_5i', active)   + ' href="multi_f17_5i.html"><i class="fa fa-female"></i> F17 5-kamp (i)</a>' +
+        '<a ' + option('m_start', active)  + ' href="multi.html"><i class="fa fa-trophy"></i>  Mångkamp -Start</a>' +
+        '<a href="#">=================================</a>' +
+        '<a ' + option('m_cast', active)   + ' href="multi_m_castorama.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män Castorama</a>' +
+        '<a ' + option('m_10', active)     + ' href="multi_m_10.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 10-kamp</a>' +
+        '<a ' + option('m_7i', active)     + ' href="multi_m_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 7-kamp (i)</a>' +
+        '<a ' + option('p17_10', active)   + ' href="multi_p17_10.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 10-kamp</a>' +
+        '<a ' + option('p17_7i', active)   + ' href="multi_p17_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 7-kamp (i)</a>' +
+        '<a ' + option('p15_8', active)    + ' href="multi_p15_8.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 8-kamp</a>' +
+        '<a ' + option('p15_7i', active)   + ' href="multi_p15_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 7-kamp (i)</a>' +
+        '<a href="#">=================================</a>' +
+        '<a ' + option('w_cast', active)   + ' href="multi_w_castorama.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor Castorama</a>' +
+        '<a ' + option('w_7', active)      + ' href="multi_w_7.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 7-kamp</a>' +
+        '<a ' + option('w_5i', active)     + ' href="multi_w_5i.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 5-kamp (i)</a>' +
+        '<a ' + option('f17_5i', active)   + ' href="multi_f17_5i.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;F17 5-kamp (i)</a>' +
+        '<a ' + option('f15_6', active)    + ' href="multi_f15_6.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;F15 6-kamp</a>' +
     '</nav>' +
     '<div class="w3-container" style="margin-top:60px"> </div>';
 
     document.getElementById('menu').innerHTML = menuString;
+    footer();
+}
+
+function header(title) {
+    var headerString =
+    '<header class="w3-display-container w3-red w3-top" style="height:60px;width:100%">' +
+        '<div class="w3-padding w3-display-left"><a href="https://hanvikenssk.myclub.se/friidrott" target="_blank"><img src="images/hanviken-rund.jpg" class="w3-circle" style="width:50px;height:50px;"></a></div>' +
+        '<div class="w3-padding w3-display-middle"><h4><center>' + title + '</center></h4></div>' +
+        '<div class="w3-padding w3-display-right"><h3><i class="w3-opennav fa fa-bars" onclick="w3_open()"></i></h3></div>' +
+    '</header>';
+    
+    document.getElementById('header').innerHTML = headerString;
+}
+
+function footer() {
+    var footerString =
+    '<center>' +
+        '<table border="0" cellpadding="2" cellspacing="0" width="95%">' +
+            '<tr>' +
+                '<td align="center">&copy; <a href="mailto:friidrott@niklassons.net">friidrott@niklassons.net</a></i></td>' +
+            '</tr>' +
+        '</table>' +
+    '</center>';
+    
+    document.getElementById('footer').innerHTML = footerString;
 }
 
 function dbStoreResults(combinedEvent, results) {
