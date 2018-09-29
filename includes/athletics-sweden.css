@@ -14,3 +14,7 @@
 .center-text {
     text-align: center;
 }
+
+input[type="number"] {
+    width: 6em;
+}
