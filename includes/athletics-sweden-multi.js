@@ -15,16 +15,15 @@ function option(item, active) {
     }
 }
 
-function menu(active, title) {
-    header(title);
+function menu(active) {
     var menuString =
     '<nav class="w3-sidenav w3-card-2 w3-white w3-top" style="width:200px;display:none;right:0;z-index:2" id="sidenav">' +
         '<div class="w3-container w3-theme-d2">' +
             '<span onclick="w3_close()" class="w3-closenav w3-right w3-xlarge"><i class="fa fa-close"></i></span>' +
         '</div>' +
         '<br>' +
-        '<a ' + option('m_start', active)  + ' href="multi.html"><i class="fa fa-trophy"></i>  Mångkamp -Start</a>' +
-        '<a href="#">=================================</a>' +
+        '<a ' + option('m_start', active)  + ' href="multi.html"><i class="fa fa-trophy"></i>  Mångkamp - Start</a>' +
+        '<a href="#">=====================</a>' +
         '<a ' + option('m_cast', active)   + ' href="multi_m_castorama.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män Castorama</a>' +
         '<a ' + option('m_10', active)     + ' href="multi_m_10.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 10-kamp</a>' +
         '<a ' + option('m_7i', active)     + ' href="multi_m_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 7-kamp (i)</a>' +
@@ -32,7 +31,7 @@ function menu(active, title) {
         '<a ' + option('p17_7i', active)   + ' href="multi_p17_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 7-kamp (i)</a>' +
         '<a ' + option('p15_8', active)    + ' href="multi_p15_8.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 8-kamp</a>' +
         '<a ' + option('p15_7i', active)   + ' href="multi_p15_7i.html"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 7-kamp (i)</a>' +
-        '<a href="#">=================================</a>' +
+        '<a href="#">=====================</a>' +
         '<a ' + option('w_cast', active)   + ' href="multi_w_castorama.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor Castorama</a>' +
         '<a ' + option('w_7', active)      + ' href="multi_w_7.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 7-kamp</a>' +
         '<a ' + option('w_5i', active)     + ' href="multi_w_5i.html"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 5-kamp (i)</a>' +
@@ -42,7 +41,6 @@ function menu(active, title) {
     '<div class="w3-container" style="margin-top:60px"> </div>';
 
     document.getElementById('menu').innerHTML = menuString;
-    footer();
 }
 
 function header(title) {
@@ -76,7 +74,12 @@ function dbStoreResults(combinedEvent, results) {
     db.put('athletics-sweden-multi', results, combinedEvent);
 }
 
-function init(combinedEvent) {
+function init(combinedEvent, title) {
+    // Initiate the web package
+    header(title);
+    menu(combinedEvent);
+    footer();
+    
     // Fetch data from the indexedDB
     var db = new ydn.db.Storage('athletics-sweden-multi');
     var req = db.get('athletics-sweden-multi', combinedEvent);
