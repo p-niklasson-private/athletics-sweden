@@ -103,6 +103,14 @@ function init(combinedEvent, title) {
 function finished(combinedEvent, resultList) {
     var eventsArray = getSubEvents(combinedEvent);
     var resultObj = resultList[0];
+
+    var note = resultObj['note'];
+    if (note) {
+        document.getElementById('note').value = note;
+    }
+    else {
+        resultObj['note'] = '';
+    }
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         var name = 'mark_' + subEvent;
@@ -123,6 +131,11 @@ function clean(combinedEvent) {
     var resultObj = {};
     var resultList;
     var eventsArray = getSubEvents(combinedEvent);
+    // Handle the note field
+    document.getElementById('note').value = '';
+    resultObj['note'] = '';
+
+    // Handle the event fields
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         var name = 'mark_' + subEvent;
@@ -143,7 +156,10 @@ function calculateScoring(combinedEvent, subEvent, mark) {
     req.done(function(storeObj) {
         resultList = storeObj.results;
         resultObj = resultList[0];
-        if (mark != '') {
+        if (subEvent == 'note') {
+            resultObj[subEvent] = mark;
+        }
+        else if (mark != '') {
             document.getElementById('points_' + subEvent).innerHTML = doCalculation(combinedEvent.charAt(0), subEvent, mark);
             document.getElementById('points_total').innerHTML = getTotalPts(combinedEvent);
             resultObj[subEvent] = mark;
