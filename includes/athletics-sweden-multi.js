@@ -7,11 +7,11 @@ $(function() {
 });
 
 function w3_open() {
-    document.getElementById("sidenav").style.display = "block";
+    $("#sidenav").show();
 }
 
 function w3_close() {
-    document.getElementById("sidenav").style.display = "none";
+    $("#sidenav").hide();
 }
 
 function option(item, active) {
@@ -48,7 +48,7 @@ function menu(active) {
     '</nav>' +
     '<div class="w3-container" style="margin-top:60px"> </div>';
 
-    document.getElementById('menu').innerHTML = menuString;
+    $('#menu').html(menuString);
 }
 
 function header(title) {
@@ -59,7 +59,7 @@ function header(title) {
     '<div class="w3-padding w3-display-right"><h3><i class="w3-opennav fa fa-bars" onclick="w3_open()"></i></h3></div>' +
     '</header>';
 
-    document.getElementById('header').innerHTML = headerString;
+    $('#header').html(headerString);
 }
 
 function content(event) {
@@ -84,8 +84,8 @@ function content(event) {
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
         '<tr>' +
-        '<td align="left"><b>Notering</b></td>' +
-        '<td colspan="2"><input type="text" id="note" size="14" onchange="calculateScoring(\'' + event + '\', \'note\', this.value)" /></td>' +
+        '<td align="left"><b>Beskrivning</b></td>' +
+        '<td colspan="2"><input type="text" id="name" size="14" onchange="calculateScoring(\'' + event + '\', \'name\', this.value)" /></td>' +
         '</tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
         '<tr>' +
@@ -124,7 +124,7 @@ function content(event) {
         '<p></p>' +
         '</div>';
     }
-    document.getElementById('content').innerHTML = contentString;
+    $('#content').html(contentString);
 }
 
 function footer() {
@@ -137,10 +137,10 @@ function footer() {
     '</table>' +
     '</center>';
 
-    document.getElementById('footer').innerHTML = footerString;
+    $('#footer').html(footerString);
 }
 
-function dbStoreResults(combinedEvent, resultList) {
+function dbStoreResults(combinedEvent, name, resultList) {
     console.log("Storing new data for '" + combinedEvent + "' in indexedDB Storage:");
     var storeObj = {'results': resultList};
     console.log(storeObj);
@@ -180,20 +180,19 @@ function finished(combinedEvent, resultList) {
     var eventsArray = getSubEvents(combinedEvent);
     var resultObj = resultList[0];
 
-    var note = resultObj['note'];
-    if (note) {
-        document.getElementById('note').value = note;
+    var name = resultObj['name'];
+    if (name) {
+        $('#name').val(name);
     }
     else {
-        resultObj['note'] = '';
+        resultObj['name'] = '';
     }
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         if (subEvent == 'break') { continue; }
-        var name = 'mark_' + subEvent;
         var mark = resultObj[subEvent];
         if (mark) {
-            document.getElementById(name).value = mark;
+            $('#mark_' + subEvent).val(mark);
             calculateScoring(combinedEvent, subEvent, mark);
         }
         else {
@@ -201,7 +200,7 @@ function finished(combinedEvent, resultList) {
         }
     }
     resultList[0] = resultObj;
-    dbStoreResults(combinedEvent, resultList);
+    dbStoreResults(combinedEvent, name, resultList);
 }
 
 function clean(combinedEvent) {
@@ -209,16 +208,15 @@ function clean(combinedEvent) {
     var resultList;
     var eventsArray = getSubEvents(combinedEvent);
     
-    // Handle the note field
-    document.getElementById('note').value = '';
-    resultObj['note'] = '';
+    // Handle the name field
+    $('#name').val('');
+    resultObj['name'] = '';
 
     // Handle the event fields
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         if (subEvent == 'break') { continue; }
-        var name = 'mark_' + subEvent;
-        document.getElementById(name).value = '';
+        $('#mark_' + subEvent).val('');
         resultObj[subEvent] = '';
         calculateScoring(combinedEvent, subEvent, '');
     }
@@ -235,21 +233,21 @@ function calculateScoring(combinedEvent, subEvent, mark) {
     req.done(function(storeObj) {
         resultList = storeObj.results;
         resultObj = resultList[0];
-        if (subEvent == 'note') {
+        if (subEvent == 'name') {
             resultObj[subEvent] = mark;
         }
         else if (mark != '') {
-            document.getElementById('points_' + subEvent).innerHTML = doCalculation(combinedEvent.charAt(0), subEvent, mark);
-            document.getElementById('points_total').innerHTML = getTotalPts(combinedEvent);
+            $('#points_' + subEvent).html(doCalculation(combinedEvent.charAt(0), subEvent, mark));
+            $('#points_total').html(getTotalPts(combinedEvent));
             resultObj[subEvent] = mark;
         }
         else {
-            document.getElementById('points_' + subEvent).innerHTML = '';
-            document.getElementById('points_total').innerHTML = getTotalPts(combinedEvent);
+            $('#points_' + subEvent).html('');
+            $('#points_total').html(getTotalPts(combinedEvent));
             resultObj[subEvent] = '';
         }
         resultList[0] = resultObj;
-        dbStoreResults(combinedEvent, resultList);
+        dbStoreResults(combinedEvent, name, resultList);
     });
 }
 
@@ -260,8 +258,8 @@ function getTotalPts(combinedEvent) {
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         if (subEvent == 'break') { continue; }
-        if (document.getElementById('points_' + subEvent).innerHTML) {
-            totalPts += parseInt(document.getElementById('points_' + subEvent).innerHTML);
+        if ($('#points_' + subEvent).html()) {
+            totalPts += parseInt($('#points_' + subEvent).html());
         }
     }
 

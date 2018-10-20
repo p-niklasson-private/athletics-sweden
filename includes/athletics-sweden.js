@@ -104,19 +104,22 @@ function findGetParameter(parameterName) {
 function menu() {
     var option_1 = '';  // Hämta Resultat
     var option_2 = '';  // Sprintkalkylator
+    var option_3 = '';  // Mångkamp
 
     var active = 'class="w3-red"';
 
     for (i = 0; i < arguments.length; i++) {
         if (arguments[i] == '1') { option_1 = active; }
         if (arguments[i] == '2') { option_2 = active; }
+        if (arguments[i] == '3') { option_3 = active; }
     }
 
     var menuString =
     '<ul class="w3-navbar w3-round-large w3-light-grey w3-medium w3-margin">' +
     '<li></li>' +
     '<li><a ' + option_1 + ' href="results.html"><i class="fa fa-list"></i> Hämta resultat</a></li>' +
-    '<li><a ' + option_2 + ' href="SprintCalculator.html"><i class="fa fa-calculator"></i> Sprintkalkylator</a></li>' +
+    '<li><a ' + option_2 + ' href="sprint_calc.html"><i class="fa fa-calculator"></i> Sprintkalkylator</a></li>' +
+    '<li><a ' + option_3 + ' href="multi.html"><i class="fa fa-trophy"></i> Mångkamp</a></li>' +
     '<li class="w3-dropdown-hover">' +
     '<a href="#"><i class="fa fa-link"></i> Länkar <i class="fa fa-caret-down"></i></a>' +
     '<div class="w3-dropdown-content w3-white w3-card-4">' +
