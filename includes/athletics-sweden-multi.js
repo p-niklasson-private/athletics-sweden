@@ -96,8 +96,8 @@ function content(event) {
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
         '<tr>' +
-        '<td align="left"><b>Namn</b></td>' +
-        '<td colspan="2"><input type="text" id="name" size="14" onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
+        '<td align="left"><b>Namn:</b></td>' +
+        '<td colspan="2" align="center"><input type="text" id="name" size="14" onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
         '</tr>' +
         '<tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
@@ -119,7 +119,7 @@ function content(event) {
                 contentString +=
                 '<tr>' +
                 '<td>' + subEventTitle + '</td>' +
-                '<td><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0,00" onchange="updateItem(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
+                '<td align="center"><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0,00" onchange="updateItem(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
                 '<td align="right"><div id="points_' + subEvent + '"></div></td>' +
                 '</tr>';
             }
@@ -130,13 +130,6 @@ function content(event) {
         '<tr>' +
         '<td colspan="2" align="left"><b>Totalpoäng:</b></td>' +
         '<td align="right"><b><div id="points_total"></b></div></td>' +
-        '</tr>' +
-        '</table>' +
-        '<p></p>' +
-        '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
-        '<tr>' +
-        '<td align="left"><input type="button" onClick="newItem(\'' + event +'\')" value="Ny post"></td>' +
-        '<td align="right"><input type="button" onClick="deleteItem(\'' + event +'\')" value="Ta bort post"></td>' +
         '</tr>' +
         '</table>' +
         '</center>' +
@@ -161,9 +154,9 @@ function footer() {
 
 function dbStoreResults(id, event, name, resultObj) {
     console.log("Storing new data for '" + event + "' in indexedDB Storage:");
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'})
-    dbd.results.put({
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'})
+    db.results.put({
         id: id,
 		event: event,
         name: name,
@@ -193,6 +186,7 @@ function init(event) {
 
 function newItem(event) {
     var id = String(Date.now());
+    console.log('Creating id \'' + id + '\'');
     var resultObj = {};
     var name = '';
     var eventsArray = getSubEvents(event);
@@ -207,17 +201,17 @@ function newItem(event) {
 
 function deleteItem(event) {
     var id = getActiveItem(event);
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'});
     
     // Delete the id
     console.log('Deleting id \'' + id + '\'');
-    dbd.results.delete(id);
+    db.results.delete(id);
     
-    // Find the first item for the event, and set it as active
+    // Find the last item for the event, and set it as active
     // If no item found, create a new item
-    var resultCollection = dbd.results.where('event').equals(event);
-    resultCollection.first(function(results) {
+    var resultCollection = db.results.where('event').equals(event);
+    resultCollection.last(function(results) {
         if (results) {
             setItem(results.id, event);
         }
@@ -229,9 +223,10 @@ function deleteItem(event) {
 
 function updateItem(event, subEvent, mark) {
     var id = getActiveItem(event);
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
-    dbd.results.get(id, function (results) {
+    console.log('Updating id \'' + id + '\'');
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.results.get(id, function (results) {
         if (subEvent == 'name') {
             results.name = mark;
         }
@@ -249,16 +244,20 @@ function setItem(id, event) {
 }
 
 function displayItem(id, event) {
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'});
     
     var buttonString1 =
         '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
         '<p></p>' +
         '<center>' +
-        '<table border="0">' +
-        '<tr>';
+        '<table border="0" width="320px">' +
+        '<tr>' +
+        '<td align="left"><a href="#" id="delete_item" title="Ta bort post" style="font-size:30px;color:red;" onClick="deleteItem(\'' + event +'\')"><i class="fa fa-minus-square-o"></i></a></td>' +
+        '<td align="center">';
     var buttonString2 =
+        '</td>' +
+        '<td align="right"><a href="#" id="new_item" title="Lägg till ny post" style="font-size:30px;color:green;" onClick="newItem(\'' + event +'\')"><i class="fa fa-plus-square-o"></i></a></td>' +
         '</tr>' +
         '</table>' +
         '</center>' +
@@ -266,23 +265,23 @@ function displayItem(id, event) {
         '</div>';
 
     // Get all matching items to display in dropdown menu
-    var resultCollection = dbd.results.where('event').equals(event);
+    var resultCollection = db.results.where('event').equals(event);
     var number = 1;
     resultCollection.each(function(results) {
         if (results.id == id) {
             // console.log('{' + results.id + ', ' + results.name + ', active}');
-            buttonString1 += '<td align="center"><strong><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></strong></td>';
+            buttonString1 += '<strong>&nbsp;<input type="button" style="font-size:14px" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></strong>';
         }
         else {
             // console.log('{' + results.id + ', ' + results.name + '}');
-            buttonString1 += '<td align="center"><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></td>';
+            buttonString1 += '&nbsp;<input type="button" style="font-size:12px" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '">';
         }
         number++;
         $('#buttons').html(buttonString1 + buttonString2); 
     });
 
     // Get details about the active item to be displayed
-    dbd.results.get(id, function (results) {
+    db.results.get(id, function (results) {
         $('#name').val(results.name);
         var eventsArray = getSubEvents(results.event);
         for (var i = 0; i < eventsArray.length; i++) {
