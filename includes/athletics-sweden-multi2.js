@@ -270,11 +270,11 @@ function displayItem(id, event) {
     var number = 1;
     resultCollection.each(function(results) {
         if (results.id == id) {
-            console.log('{' + results.id + ', ' + results.name + ', active}');
+            // console.log('{' + results.id + ', ' + results.name + ', active}');
             buttonString1 += '<td align="center"><strong><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></strong></td>';
         }
         else {
-            console.log('{' + results.id + ', ' + results.name + '}');
+            // console.log('{' + results.id + ', ' + results.name + '}');
             buttonString1 += '<td align="center"><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></td>';
         }
         number++;
