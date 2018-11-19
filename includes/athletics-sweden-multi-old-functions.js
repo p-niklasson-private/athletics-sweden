@@ -23,18 +23,6 @@ function option(item, active) {
     }
 }
 
-function setActiveItem(id, event) {
-    if (localStorage) {
-        localStorage.setItem(event, id);
-    }
-}
-
-function getActiveItem(event) {
-    if (localStorage) {
-        return localStorage.getItem(event);
-    }
-}
-
 function menu(active) {
     var menuString =
     '<nav class="w3-sidenav w3-card-2 w3-white w3-top" style="width:200px;display:none;right:0;z-index:2" id="sidenav">' +
@@ -96,10 +84,9 @@ function content(event) {
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
         '<tr>' +
-        '<td align="left"><b>Namn</b></td>' +
-        '<td colspan="2"><input type="text" id="name" size="14" onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
+        '<td align="left"><b>Beskrivning</b></td>' +
+        '<td colspan="2"><input type="text" id="name" size="14" onchange="calculateScoring(\'' + event + '\', \'name\', this.value)" /></td>' +
         '</tr>' +
-        '<tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
         '<tr>' +
         '<td align="left"><b>Gren</b></td>' +
@@ -119,7 +106,7 @@ function content(event) {
                 contentString +=
                 '<tr>' +
                 '<td>' + subEventTitle + '</td>' +
-                '<td><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0,00" onchange="updateItem(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
+                '<td><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0,00" onchange="calculateScoring(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
                 '<td align="right"><div id="points_' + subEvent + '"></div></td>' +
                 '</tr>';
             }
@@ -132,13 +119,7 @@ function content(event) {
         '<td align="right"><b><div id="points_total"></b></div></td>' +
         '</tr>' +
         '</table>' +
-        '<p></p>' +
-        '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
-        '<tr>' +
-        '<td align="left"><input type="button" onClick="newItem(\'' + event +'\')" value="Ny post"></td>' +
-        '<td align="right"><input type="button" onClick="deleteItem(\'' + event +'\')" value="Ta bort post"></td>' +
-        '</tr>' +
-        '</table>' +
+        '<input type="button" onClick="clean(\'' + event +'\')" value="Rensa">' +
         '</center>' +
         '<p></p>' +
         '</div>';
@@ -159,146 +140,120 @@ function footer() {
     $('#footer').html(footerString);
 }
 
-function dbStoreResults(id, event, name, resultObj) {
-    console.log("Storing new data for '" + event + "' in indexedDB Storage:");
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'})
-    dbd.results.put({
-        id: id,
-		event: event,
-        name: name,
-        resultObj: resultObj
-	});
+function dbStoreResults(combinedEvent, name, resultList) {
+    console.log("Storing new data for '" + combinedEvent + "' in indexedDB Storage:");
+    var storeObj = {'results': resultList};
+    console.log(storeObj);
+    var db = new ydn.db.Storage('athletics-sweden-multi');
+    db.put('athletics-sweden-multi', storeObj, combinedEvent);
 }
 
-function init(event) {
-    var title = getEventTitle(event);
+function init(combinedEvent) {
+    var title = getEventTitle(combinedEvent);
     header(title);
-    menu(event);
-    content(event);
+    menu(combinedEvent);
+    content(combinedEvent);
     footer();
 
-    if (event != 'm_start') {
-        var id = getActiveItem(event);
-        if (id != null) {
-            console.log('Found item with id ' + id + '...');
-            displayItem(id, event);
-        }
-        else { 
-            console.log('Found no results in DB. Creating new item for ' + event + '...');
-            newItem(event);
-        }
+    if (combinedEvent != 'm_start') {
+        // Fetch data from the indexedDB
+        var db = new ydn.db.Storage('athletics-sweden-multi');
+        var req = db.get('athletics-sweden-multi', combinedEvent);
+        var resultList;
+        req.done(function(storeObj) {
+            if (! storeObj) {
+                var resultObj = {};
+                resultList= [resultObj];
+            }
+            else {
+                resultList = storeObj.results;
+            }
+            finished(combinedEvent, resultList);
+        });
+        req.fail(function(e) {
+            console.log(e.message);
+        });
     }
 }
 
-function newItem(event) {
-    var id = String(Date.now());
-    var resultObj = {};
-    var name = '';
-    var eventsArray = getSubEvents(event);
+function finished(combinedEvent, resultList) {
+    var eventsArray = getSubEvents(combinedEvent);
+    var resultObj = resultList[0];
+
+    var name = resultObj['name'];
+    if (name) {
+        $('#name').val(name);
+    }
+    else {
+        resultObj['name'] = '';
+    }
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         if (subEvent == 'break') { continue; }
-        resultObj[subEvent] = '';
-    }
-    dbStoreResults(id, event, name, resultObj);
-    setItem(id, event);
-}
-
-function deleteItem(event) {
-    var id = getActiveItem(event);
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
-    
-    // Delete the id
-    console.log('Deleting id \'' + id + '\'');
-    dbd.results.delete(id);
-    
-    // Find the first item for the event, and set it as active
-    // If no item found, create a new item
-    var resultCollection = dbd.results.where('event').equals(event);
-    resultCollection.first(function(results) {
-        if (results) {
-            setItem(results.id, event);
-        }
-        else {
-            newItem(event);
-        }
-    });
-}
-
-function updateItem(event, subEvent, mark) {
-    var id = getActiveItem(event);
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
-    dbd.results.get(id, function (results) {
-        if (subEvent == 'name') {
-            results.name = mark;
-        }
-        else {
-            results.resultObj[subEvent] = mark;
-        }
-        dbStoreResults(id, event, results.name, results.resultObj);
-        displayItem(id, event);
-    });
-}
-
-function setItem(id, event) {
-    displayItem(id, event);
-    setActiveItem(id, event);
-}
-
-function displayItem(id, event) {
-    var dbd = new Dexie("athletics-sweden-multi-dexie");
-    dbd.version(1).stores({ results: 'id, event, name, resultObj'});
-    
-    var buttonString1 =
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
-        '<p></p>' +
-        '<center>' +
-        '<table border="0">' +
-        '<tr>';
-    var buttonString2 =
-        '</tr>' +
-        '</table>' +
-        '</center>' +
-        '<p></p>' +
-        '</div>';
-
-    // Get all matching items to display in dropdown menu
-    var resultCollection = dbd.results.where('event').equals(event);
-    var number = 1;
-    resultCollection.each(function(results) {
-        if (results.id == id) {
-            // console.log('{' + results.id + ', ' + results.name + ', active}');
-            buttonString1 += '<td align="center"><strong><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></strong></td>';
-        }
-        else {
-            // console.log('{' + results.id + ', ' + results.name + '}');
-            buttonString1 += '<td align="center"><input type="button" title="' + results.name + '" onClick="setItem(\'' + results.id + '\',\'' + event +'\')" value="' + number + '"></td>';
-        }
-        number++;
-        $('#buttons').html(buttonString1 + buttonString2); 
-    });
-
-    // Get details about the active item to be displayed
-    dbd.results.get(id, function (results) {
-        $('#name').val(results.name);
-        var eventsArray = getSubEvents(results.event);
-        for (var i = 0; i < eventsArray.length; i++) {
-            var subEvent = eventsArray[i];
-            if (subEvent == 'break') { continue; }
-            var mark = results.resultObj[subEvent];
+        var mark = resultObj[subEvent];
+        if (mark) {
             $('#mark_' + subEvent).val(mark);
-            $('#points_' + subEvent).html(doCalculation(results.event.charAt(0), subEvent, mark));
-            $('#points_total').html(getTotalPts(results.event));
+            calculateScoring(combinedEvent, subEvent, mark);
         }
+        else {
+            resultObj[subEvent] = '';
+        }
+    }
+    resultList[0] = resultObj;
+    dbStoreResults(combinedEvent, name, resultList);
+}
+
+function clean(combinedEvent) {
+    var resultObj = {};
+    var resultList;
+    var eventsArray = getSubEvents(combinedEvent);
+    
+    // Handle the name field
+    $('#name').val('');
+    resultObj['name'] = '';
+
+    // Handle the event fields
+    for (var i = 0; i < eventsArray.length; i++) {
+        var subEvent = eventsArray[i];
+        if (subEvent == 'break') { continue; }
+        $('#mark_' + subEvent).val('');
+        resultObj[subEvent] = '';
+        calculateScoring(combinedEvent, subEvent, '');
+    }
+    resultList = [resultObj];
+    dbStoreResults(combinedEvent, resultList);
+}
+
+function calculateScoring(combinedEvent, subEvent, mark) {
+    // Fetch data from the indexedDB
+    var db = new ydn.db.Storage('athletics-sweden-multi');
+    var req = db.get('athletics-sweden-multi', combinedEvent);
+    var resultList;
+    var resultObj;
+    req.done(function(storeObj) {
+        resultList = storeObj.results;
+        resultObj = resultList[0];
+        if (subEvent == 'name') {
+            resultObj[subEvent] = mark;
+        }
+        else if (mark != '') {
+            $('#points_' + subEvent).html(doCalculation(combinedEvent.charAt(0), subEvent, mark));
+            $('#points_total').html(getTotalPts(combinedEvent));
+            resultObj[subEvent] = mark;
+        }
+        else {
+            $('#points_' + subEvent).html('');
+            $('#points_total').html(getTotalPts(combinedEvent));
+            resultObj[subEvent] = '';
+        }
+        resultList[0] = resultObj;
+        dbStoreResults(combinedEvent, name, resultList);
     });
 }
 
-function getTotalPts(event) {
+function getTotalPts(combinedEvent) {
     var totalPts = 0;
-    var eventsArray = getSubEvents(event);
+    var eventsArray = getSubEvents(combinedEvent);
 
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
@@ -307,11 +262,12 @@ function getTotalPts(event) {
             totalPts += parseInt($('#points_' + subEvent).html());
         }
     }
+
     return totalPts;
 }
 
-function getEventTitle(event) {
-    switch (event)
+function getEventTitle(combinedEvent) {
+    switch (combinedEvent)
     {
         case 'm_start': return 'Mångkamp';
         case 'm_cast' : return 'Män Castorama';
@@ -330,8 +286,8 @@ function getEventTitle(event) {
 }
         
 
-function getSubEvents(event) {
-    switch (event)
+function getSubEvents(combinedEvent) {
+    switch (combinedEvent)
     {
         case 'm_cast' :  return new Array('SP', 'DT', 'JT', 'HT');
         case 'm_10' :    return new Array('100', 'LJ', 'SP', 'HJ', '400', 'break', '110H', 'DT', 'PV', 'JT', '1500');
@@ -575,7 +531,7 @@ function doCalculation(sex, eventName, mark) {
 
 function calculateRunning(mark, a, b, c) {
     var points = Math.floor(a * Math.pow(b - mark, c));
-    if ( ! mark || isNaN(points) ) {
+    if ( isNaN(points) ) {
         return 0;
     }
     else {
@@ -585,7 +541,7 @@ function calculateRunning(mark, a, b, c) {
 
 function calculateField(mark, a, b, c) {
     var points = Math.floor(a * Math.pow(mark - b, c));
-    if ( ! mark || isNaN(points) ) {
+    if ( isNaN(points) ) {
         return 0;
     }
     else {
