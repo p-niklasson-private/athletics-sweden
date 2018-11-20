@@ -147,7 +147,8 @@ function footer() {
     '<td align="center">&copy; <a href="mailto:friidrott@niklassons.net">friidrott@niklassons.net</a></i></td>' +
     '</tr>' +
     '</table>' +
-    '</center>';
+    '</center>' +
+    '<p></p>';
 
     $('#footer').html(footerString);
 }
@@ -202,21 +203,37 @@ function newItem(event) {
 function deleteItem(event) {
     var id = getActiveItem(event);
     var db = new Dexie("athletics-sweden-multi-dexie");
+    var deleteOk = false;
     db.version(1).stores({ results: 'id, event, name, resultObj'});
-    
-    // Delete the id
-    console.log('Deleting id \'' + id + '\'');
-    db.results.delete(id);
-    
-    // Find the last item for the event, and set it as active
-    // If no item found, create a new item
-    var resultCollection = db.results.where('event').equals(event);
-    resultCollection.last(function(results) {
-        if (results) {
-            setItem(results.id, event);
+    db.results.get(id, function (results) {
+        
+        // If the data item has a name, check if it is OK to delete it
+        if (results.name) {
+            if (confirm("Ta bort data för \'" + results.name + "\'?")) {
+                deleteOk = true;
+            }
         }
+        
+        // If the Item has no name, we just delete it without a warning
         else {
-            newItem(event);
+            deleteOk = true;
+        }
+        if (deleteOk) {
+            // Delete the id
+            console.log('Deleting id \'' + id + '\'');
+            db.results.delete(id);
+    
+            // Find the last item for the event, and set it as active
+            // If no item found, create a new item
+            var resultCollection = db.results.where('event').equals(event);
+            resultCollection.last(function(results) {
+                if (results) {
+                    setItem(results.id, event);
+                }
+                else {
+                    newItem(event);
+                }
+            });
         }
     });
 }
@@ -264,7 +281,7 @@ function displayItem(id, event) {
         '<p></p>' +
         '</div>';
 
-    // Get all matching items to display in dropdown menu
+    // Get all matching items to display as buttons
     var resultCollection = db.results.where('event').equals(event);
     var number = 1;
     resultCollection.each(function(results) {
@@ -283,30 +300,19 @@ function displayItem(id, event) {
     // Get details about the active item to be displayed
     db.results.get(id, function (results) {
         $('#name').val(results.name);
+        var totalPoints = 0;
         var eventsArray = getSubEvents(results.event);
         for (var i = 0; i < eventsArray.length; i++) {
             var subEvent = eventsArray[i];
             if (subEvent == 'break') { continue; }
             var mark = results.resultObj[subEvent];
             $('#mark_' + subEvent).val(mark);
-            $('#points_' + subEvent).html(doCalculation(results.event.charAt(0), subEvent, mark));
-            $('#points_total').html(getTotalPts(results.event));
+            var points = doCalculation(results.event.charAt(0), subEvent, mark);
+            $('#points_' + subEvent).html(points);
+            totalPoints += points;
+            $('#points_total').html(totalPoints);
         }
     });
-}
-
-function getTotalPts(event) {
-    var totalPts = 0;
-    var eventsArray = getSubEvents(event);
-
-    for (var i = 0; i < eventsArray.length; i++) {
-        var subEvent = eventsArray[i];
-        if (subEvent == 'break') { continue; }
-        if ($('#points_' + subEvent).html()) {
-            totalPts += parseInt($('#points_' + subEvent).html());
-        }
-    }
-    return totalPts;
 }
 
 function getEventTitle(event) {
@@ -360,7 +366,7 @@ function getSubEventTitle(subEvent) {
         case '1000' : return "1.000 meter [s]"; 
         case '1500' : return "1.500 meter [s]";
         case '60H' :  return "60 m häck [s]"; 
-        case '80H' :  return "60 m häck [s]";
+        case '80H' :  return "80 m häck [s]";
         case '100H' : return "100 m häck [s]"; 
         case '110H' : return "110 m häck [s]"; 
         case 'HJ' :   return "Höjdhopp [m]"; 
@@ -575,21 +581,17 @@ function doCalculation(sex, eventName, mark) {
 function calculateRunning(mark, a, b, c) {
     var points = Math.floor(a * Math.pow(b - mark, c));
     if ( ! mark || isNaN(points) ) {
-        return 0;
+        points = 0;
     }
-    else {
-        return points;
-    }
+    return points;
 }
 
 function calculateField(mark, a, b, c) {
     var points = Math.floor(a * Math.pow(mark - b, c));
     if ( ! mark || isNaN(points) ) {
-        return 0;
+        points = 0;
     }
-    else {
-        return points;
-    }
+    return points;
 }
 
 function getSeconds(mark) {
