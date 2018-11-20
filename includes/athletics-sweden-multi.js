@@ -97,7 +97,7 @@ function content(event) {
         '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
         '<tr>' +
         '<td align="left"><b>Namn:</b></td>' +
-        '<td colspan="2" align="center"><input type="text" id="name" size="14" onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
+        '<td colspan="2" align="center"><input type="text" id="name" size="14" placeholder="Ny post..." onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
         '</tr>' +
         '<tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
