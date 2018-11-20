@@ -3,11 +3,8 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>Hanviken friidrott - Sprintkalkylator</title>
     <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="includes/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="includes/athletics-sweden.js"></script>
-    <script type="text/javascript" src="includes/ydn.db-is-core-qry.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
@@ -15,7 +12,7 @@
 
     <script type="text/javascript">
 
-    function calculateFrankDickChart() {
+    function calculateChart() {
         var chart = new Array();
 
         chart[0] = [3.58,3.61,2.48,2.51,6.22,6.27,14.87,14.97,25.47,25.72,6.49,6.53,10.09,10.16,20.17,20.32];
@@ -53,83 +50,83 @@
         z1 = 0;
         z2 = 0;
 
-        if(document.forms.FrankDickChart.x30mblocksHT.value > 0) {
+        if ( $('#x30mblocksHT').val() > 0 ) {
             z1 = 0;
             z2 = 1;
-            z3 = document.forms.FrankDickChart.x30mblocksHT.value;
+            z3 = $('#x30mblocksHT').val();
         }
-        else if(document.forms.FrankDickChart.x30mflying.value > 0) {
+        else if ( $('#x30mflying').val() > 0 ) {
             z1 = 2;
             z2 = 3;
-            z3 = document.forms.FrankDickChart.x30mflying.value;
+            z3 = $('#x30mflying').val();
         }
-        else if(document.forms.FrankDickChart.x60mblocksHT.value > 0) {
+        else if($('#x60mblocksHT').val() > 0) {
             z1 = 4;
             z2 = 5;
-            z3 = document.forms.FrankDickChart.x60mblocksHT.value;
+            z3 = $('#x60mblocksHT').val();
         }
-        else if(document.forms.FrankDickChart.x150mstandingHT.value > 0) {
-            z1 = 6;
-            z2 = 7;
-            z3 = document.forms.FrankDickChart.x150mstandingHT.value;
-        }
-        else if(document.forms.FrankDickChart.x250mstandingHT.value > 0){
-            z1 = 8;
-            z2 = 9;
-            z3 = document.forms.FrankDickChart.x250mstandingHT.value;
-        }
-        else if(document.forms.FrankDickChart.x60melectronic.value > 0){
+        //else if($('#x150mstandingHT').val() > 0) {
+        //    z1 = 6;
+        //    z2 = 7;
+        //    z3 = $('#x150mstandingHT').val();
+        //}
+        //else if($('#x250mstandingHT').val() > 0){
+        //    z1 = 8;
+        //    z2 = 9;
+        //    z3 = $('#x250mstandingHT').val();
+        //}
+        else if($('#x60melectronic').val() > 0){
             z1 = 10;
             z2 = 11;
-            z3 = document.forms.FrankDickChart.x60melectronic.value;
+            z3 = $('#x60melectronic').val();
         }
-        else if(document.forms.FrankDickChart.x100melectronic.value > 0) {
+        else if($('#x100melectronic').val() > 0) {
             z1 = 12;
             z2 = 13;
-            z3 = document.forms.FrankDickChart.x100melectronic.value;
+            z3 = $('#x100melectronic').val();
         }
-        else if(document.forms.FrankDickChart.x200melectronic.value > 0) {
+        else if($('#x200melectronic').val() > 0) {
             z1 = 14;
             z2 = 15;
-            z3 = document.forms.FrankDickChart.x200melectronic.value;
+            z3 = $('#x200melectronic').val();
         }
 
         if(z3 < 0) {
-            clearFrankDickChart();
+            clearChart();
             return;
         }
 
         for(i = 0 ; i < 29; i++) {
             if(z3 >= chart[i][z1] && z3 <= chart[i][z2]) {
-                document.forms.FrankDickChart.y30mblocksHT.value = chart[i][0] + "-" + chart[i][1];
-                document.forms.FrankDickChart.y30mflying.value = chart[i][2] + "-" + chart[i][3];
-                document.forms.FrankDickChart.y60mblocksHT.value = chart[i][4] + "-" + chart[i][5];
-                document.forms.FrankDickChart.y150mstandingHT.value = chart[i][6] + "-" + chart[i][7];
-                document.forms.FrankDickChart.y250mstandingHT.value = chart[i][8] + "-" + chart[i][9];
-                document.forms.FrankDickChart.y60melectronic.value = chart[i][10] + "-" + chart[i][11];
-                document.forms.FrankDickChart.y100melectronic.value = chart[i][12] + "-" + chart[i][13];
-                document.forms.FrankDickChart.y200melectronic.value = chart[i][14] + "-" + chart[i][15];
+                $('#y30mblocksHT').html(chart[i][0] + "-" + chart[i][1]);
+                $('#y30mflying').html(chart[i][2] + "-" + chart[i][3]);
+                $('#y60mblocksHT').html(chart[i][4] + "-" + chart[i][5]);
+                //$('#y150mstandingHT').html(chart[i][6] + "-" + chart[i][7]);
+                //$('#y250mstandingHT').html(chart[i][8] + "-" + chart[i][9]);
+                $('#y60melectronic').html(chart[i][10] + "-" + chart[i][11]);
+                $('#y100melectronic').html(chart[i][12] + "-" + chart[i][13]);
+                $('#y200melectronic').html(chart[i][14] + "-" + chart[i][15]);
             }
         }
     }
 
-    function clearFrankDickChart() {
-        document.forms.FrankDickChart.x30mblocksHT.value = "";
-        document.forms.FrankDickChart.x30mflying.value = "";
-        document.forms.FrankDickChart.x60mblocksHT.value = "";
-        document.forms.FrankDickChart.x150mstandingHT.value = "";
-        document.forms.FrankDickChart.x250mstandingHT.value = "";
-        document.forms.FrankDickChart.x60melectronic.value = "";
-        document.forms.FrankDickChart.x100melectronic.value = "";
-        document.forms.FrankDickChart.x200melectronic.value = "";
-        document.forms.FrankDickChart.y30mblocksHT.value = "";
-        document.forms.FrankDickChart.y30mflying.value = "";
-        document.forms.FrankDickChart.y60mblocksHT.value = "";
-        document.forms.FrankDickChart.y150mstandingHT.value = "";
-        document.forms.FrankDickChart.y250mstandingHT.value = "";
-        document.forms.FrankDickChart.y60melectronic.value = "";
-        document.forms.FrankDickChart.y100melectronic.value = "";
-        document.forms.FrankDickChart.y200melectronic.value = "";
+    function clearChart() {
+        $('#x30mblocksHT').val('');
+        $('#x30mflying').val('');
+        $('#x60mblocksHT').val('');
+        //$('#x150mstandingHT').val('');
+        //$('#x250mstandingHT').val('');
+        $('#x60melectronic').val('');
+        $('#x100melectronic').val('');
+        $('#x200melectronic').val('');
+        $('#y30mblocksHT').html('');
+        $('#y30mflying').html('');
+        $('#y60mblocksHT').html('');
+        //$('#y150mstandingHT').html('');
+        //$('#y250mstandingHT').html('');
+        $('#y60melectronic').html('');
+        $('#y100melectronic').html('');
+        $('#y200melectronic').html('');
     }
 </script>
 
@@ -142,60 +139,50 @@
 
     <div class="w3-container w3-round-large w3-light-grey w3-margin w3-center"">
         <p></p>
-        <form name="FrankDickChart">
-            <table align="center">
-                <tr align="center">
-                    <td></td>
-                    <td><span style="color: red;"><b>Indata</b></span></td>
-                    <td><span style="color: red;"><b>Resultat</b></span></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">30m startblock (manuell):</span></td>
-                    <td><input name="x30mblocksHT" size="10" /></td>
-                    <td><input name="y30mblocksHT" size="10" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">30m flygande start:</span></td>
-                    <td><input name="x30mflying" size="10" /></td>
-                    <td><input name="y30mflying" size="10" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">60m startblock (manuell):</span></td>
-                    <td><input name="x60mblocksHT" size="10" /></td>
-                    <td><input name="y60mblocksHT" size="10" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">150m stående start (manuell):</span></td>
-                    <td><input name="x150mstandingHT" size="10" /></td>
-                    <td><input name="y150mstandingHT" size="10" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">250m stående start (manuell):</span></td>
-                    <td><input name="x250mstandingHT" size="10" /></td>
-                    <td><input name="y250mstandingHT" size="10" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">60m eltid:</span></td>
-                    <td><input name="x60melectronic" size="10" type="text" /></td>
-                    <td><input name="y60melectronic" size="10" type="text" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">100m eltid:</span></td>
-                    <td><input name="x100melectronic" size="10" type="text" /></td>
-                    <td><input name="y100melectronic" size="10" type="text" /></td>
-                </tr>
-                <tr align="right">
-                    <td><span style="color: black;">200m eltid:</span></td>
-                    <td><input name="x200melectronic" size="10" type="text" /></td>
-                    <td><input name="y200melectronic" size="10" type="text" /></td>
-                </tr>
-                <tr align="center">
-                    <td></td>
-                    <td><input value="BERÄKNA" onclick="calculateFrankDickChart()" type="button" /></td>
-                    <td><input value="RENSA" onclick="clearFrankDickChart()" type="button" /></td>
-                </tr>
-            </table>
-        </form>
+        <table align="center">
+            <tr>
+                <td></td>
+                <td><span style="color: red;"><b>Indata</b></span></td>
+                <td></td>
+                <td align="left"><span style="color: red;"><b>Resultat</b></span></td>
+            </tr>
+            <tr>
+                <td align="right">30m startblock (manuell) [<i>3.58-5.50</i>]:</td>
+                <td><input type="number" id="x30mblocksHT" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y30mblocksHT" /></div></td>
+            </tr>
+            <tr>
+                <td align="right">30m flygande start [<i>2.48-4.40</i>]:</td>
+                <td><input type="number" id="x30mflying" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y30mflying" /></div></td>
+            </tr>
+            <tr>
+                <td align="right">60m startblock (manuell) [<i>6.22-8.50</i>]:</td>
+                <td><input type="number" id="x60mblocksHT" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y60mblocksHT" /></div></td>
+            </tr>
+            <tr>
+                <td align="right">60m eltid [<i>6.49-8.90</i>]:</td>
+                <td><input type="number" id="x60melectronic" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y60melectronic" /></div></td>
+            </tr>
+            <tr>
+                <td align="right">100m eltid [<i>10.09-13.90</i>]:</td>
+                <td><input type="number" id="x100melectronic" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y100melectronic" /></div></td>
+            </tr>
+            <tr>
+                <td align="right">200m eltid [<i>20.17-28.00</i>]:</td>
+                <td><input type="number" id="x200melectronic" class="right-text" min="0.0" max="99.99" step="0.01" placeholder="0.00" onchange="calculateChart()" onclick="clearChart()" /></td>
+                <td></td>
+                <td align="left"><div id="y200melectronic" /></div></td>
+            </tr>
+        </table>
         <p></p>
     </div>
     <div class="w3-container w3-round-large w3-light-grey w3-margin w3-center">
@@ -203,14 +190,10 @@
         <b>Frank Dick Chart Interface - Predict Performance Based On Sprint Times:</b><br/>
         This calculator is based on the chart for sprint performance in the article </br>
         <a href="https://docs.google.com/viewerng/viewer?url=http://elitetrack.com/article_files/maximumspeed.pdf" target="_blank">'Development of Maximum Sprinting Speed'</a>
-        by Frank W. Dick. </br></br>
-        Enter data in any of the input boxes and click calculate to display the results.</br>
-        The lower and upper bounds for the input data will be listed: </br>
-        <i>30m from blocks (3.58-5.50), 30m flying (2.48-4.40), 60m from blocks (HT) (6.22-8.50), 150m standing (HT) (14.87-20.80),</br>
-            250m standing (HT) (25.47-35.60), 60m electronic (6.49-8.90), 100m electronic (10.09-13.90), 200m electronic (20.17-28.00).</i><br />
-            <br />
-            <i>Original design by Andrew Darqui <a href="http://www.adarq.org/adarq-org-special-content/frank-dick-chart-sprint-time-calculator/">here</a></i>
-            <p></p>
-        </div>
-    </body>
-    </html>
+        by Frank W. Dick.
+        <p></p>
+        <i>Original design by Andrew Darqui <a href="http://www.adarq.org/adarq-org-special-content/frank-dick-chart-sprint-time-calculator/">here</a></i>
+        <p></p>
+    </div>
+</body>
+</html>
