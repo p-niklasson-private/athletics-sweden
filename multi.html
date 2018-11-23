@@ -4,9 +4,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Friidrott - Mångkamp</title>
     <link rel="icon" href="images/favicon.jpg" type="image/jpg" />
-
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="includes/jquery-3.3.1.min.js"></script>
-    <script src="includes/ydn.db-is-core-qry.js"></script>
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
     <script src="includes/athletics-sweden-multi.js"></script> 
 
@@ -14,6 +14,15 @@
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-red.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="includes/athletics-sweden.css">
+    
+    <script type="text/javascript">
+
+    var event = findGetParameter('event');
+
+    google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
+    google.charts.setOnLoadCallback(function() { init(event); });
+    
+    </script>
 </head>
 
 <html>
@@ -22,6 +31,20 @@
     <div id="header"></div>
     <div id="content"></div>
     <div id="buttons"></div>
+    <div id="flip_charts">
+        <table width="95%" align="center">
+            <tr><td width="20px">&nbsp;</td><td align="center"><b>Tabell och kurva</b></td><td width="20px" align="right"><i class="fa fa-caret-left" style="font-size:20px"></i></td></tr>
+        </table>
+    </div>
+    <div id="charts_panel">
+        <p></p>
+        <table align="center">
+            <tr><td><div id="table_div"><p>No data available</p></div></td></tr>
+            <tr><td><p></p></td></tr>           
+            <tr><td><div id="chart_div"></div></td></tr>
+        </table>
+        <p></p>
+    </div>
     <div id="footer"></div>
 </body>
 </html>

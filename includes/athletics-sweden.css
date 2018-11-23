@@ -18,3 +18,24 @@
 input[type="number"] {
     width: 6em;
 }
+
+.chart {
+    width: 95%;
+    min-height: 450px;
+}
+
+.row {
+    margin: 0 !important;
+}
+
+#flip_charts {
+    padding: 5px;
+    text-align: center;
+    background-color: #e5eecc;
+    border: solid 1px #c3c3c3;
+}
+
+#charts_panel {
+    padding: 10px;
+    display: none;
+}

@@ -1,9 +1,10 @@
 $(function() {
-    var event = findGetParameter('event');
-    if (! event) {
-        event = 'm_start';
-    }
-    init(event);
+
+    $("#flip_charts").click(function(){
+        $("#charts_panel").slideToggle("slow");
+        $("i", this).toggleClass("fa fa-caret-down fa fa-caret-left");
+    });
+    
 });
 
 function w3_open() {
@@ -102,9 +103,9 @@ function content(event) {
         '<tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
         '<tr>' +
-        '<td align="left"><b>Gren</b></td>' +
-        '<td align="center"><b>Resultat</b></td>' +
-        '<td align="right"><b>Poäng</b></td>' +
+        '<td align="left"><b>Gren:</b></td>' +
+        '<td align="center"><b>Resultat:</b></td>' +
+        '<td align="right"><b>Poäng:</b></td>' +
         '</tr>';
     
         for (var i = 0; i < eventsArray.length; i++) {
@@ -119,7 +120,7 @@ function content(event) {
                 contentString +=
                 '<tr>' +
                 '<td>' + subEventTitle + '</td>' +
-                '<td align="center"><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0,00" onchange="updateItem(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
+                '<td align="center"><input type="number" id="mark_' + subEvent + '" class="right-text" min="0.0" max="999.99" step="0.01" placeholder="0.00" onchange="updateItem(\'' + event + '\', \'' + subEvent + '\', this.value)" /></td>' +
                 '<td align="right"><div id="points_' + subEvent + '"></div></td>' +
                 '</tr>';
             }
@@ -137,6 +138,27 @@ function content(event) {
         '</div>';
     }
     $('#content').html(contentString);
+}
+
+
+function charts() {
+    chartString =
+    '<div id="flip_charts">' +
+    '<table width="95%" align="center">' +
+    '<tr><td width="20px">&nbsp;</td><td align="center"><b>Tabell och kurva</b></td><td width="20px" align="right"><i class="fa fa-caret-left" style="font-size:20px"></i></td></tr>' +
+    '</table>' +
+    '</div>' +
+    '<div id="charts_panel">' +
+    '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
+    '<p></p>' +
+    '<table align="center">' +
+    '<tr><td align="center"><div id="table_div"><p>No data available</p></div></td></tr>' +
+    '<tr><td><p></p></td></tr>' +            
+    '<tr><td align="center"><div id="chart_div"></div></td></tr>' +
+    '</table>' +
+    '<p></p>' +
+    '</div>';
+    $('#charts').html(chartString);    
 }
 
 function footer() {
@@ -166,10 +188,17 @@ function dbStoreResults(id, event, name, resultObj) {
 }
 
 function init(event) {
+    var event = findGetParameter('event');
+    if (! event) {
+        event = 'm_start';
+    }
     var title = getEventTitle(event);
     header(title);
     menu(event);
     content(event);
+    if (event != 'm_start') {
+        charts();
+    }
     footer();
 
     if (event != 'm_start') {
@@ -182,6 +211,7 @@ function init(event) {
             console.log('Found no results in DB. Creating new item for ' + event + '...');
             newItem(event);
         }
+        populateData(event)
     }
 }
 
@@ -251,13 +281,14 @@ function updateItem(event, subEvent, mark) {
             results.resultObj[subEvent] = mark;
         }
         dbStoreResults(id, event, results.name, results.resultObj);
-        displayItem(id, event);
+        setItem(id, event);
     });
 }
 
 function setItem(id, event) {
     displayItem(id, event);
     setActiveItem(id, event);
+    populateData(event);
 }
 
 function displayItem(id, event) {
@@ -315,6 +346,146 @@ function displayItem(id, event) {
     });
 }
 
+function populateData(event) {
+    populateChartData(event);
+    populateTableData(event);
+}
+
+function populateChartData(event) {
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    var chartData = new google.visualization.DataTable();
+
+    // Generate the first chart data column with all names of the events
+    var rowIndex = 0;
+    var columnIndex = 0;
+    chartData.addColumn('string', 'Gren');
+    var eventsArray = getSubEvents(event);
+    for (var i = 0; i < eventsArray.length; i++) {
+        var subEvent = eventsArray[i];
+        if (subEvent == 'break') {
+            continue;
+        }
+        var subEventTitle = getSubEventShortTitle(subEvent);
+        chartData.addRow();
+        chartData.setCell(rowIndex, columnIndex, subEventTitle);
+        rowIndex++;
+    }
+    chartData.addRow();
+    chartData.setCell(rowIndex, columnIndex, 'Totalt');
+    
+    // Create a new column in the chart data table for each individual Name    
+    var resultCollection = db.results.where('event').equals(event);
+    resultCollection.each(function(results) {
+        // Only display data sets that has a name
+        if (results.name) {
+            var totalPoints = 0;
+            var formattedValue;
+            chartData.addColumn('number', results.name);
+            columnIndex++;
+            rowIndex = 0;
+            for (var i = 0; i < eventsArray.length; i++) {
+                var subEvent = eventsArray[i];
+                if (subEvent == 'break') {
+                    continue;
+                }
+                var mark = results.resultObj[subEvent];
+                var points = doCalculation(event.charAt(0), subEvent, mark);
+                totalPoints += points;
+                if (points) {
+                    formattedValue = mark + ': ' + points + 'p';
+                }
+                else {
+                    formattedValue = "";
+                }
+                chartData.setCell(rowIndex, columnIndex, totalPoints, formattedValue, {'className': 'right-text'});
+                rowIndex++;
+            }
+            chartData.setCell(rowIndex, columnIndex, totalPoints, totalPoints + 'p', {'className': 'right-text'});
+            drawChart(chartData);
+        }
+    });
+}
+    
+function populateTableData(event) {
+    var db = new Dexie("athletics-sweden-multi-dexie");
+    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    var tableData = new google.visualization.DataTable();
+
+    // Generate the data columns with all names of the events
+    tableData.addColumn('string', 'Namn');
+    var eventsArray = getSubEvents(event);
+    for (var i = 0; i < eventsArray.length; i++) {
+        var subEvent = eventsArray[i];
+        if (subEvent == 'break') {
+            continue;
+        }
+        var subEventTitle = getSubEventShortTitle(subEvent);
+        tableData.addColumn('number', subEventTitle);
+    }
+    tableData.addColumn('number', 'Totalt');
+
+    var rowIndex = 0;
+
+    // Create a new column in the chart data table for each individual Name    
+    var resultCollection = db.results.where('event').equals(event);
+    resultCollection.each(function(results) {
+        // Only display data sets that has a name
+        if (results.name) {
+            var totalPoints = 0;
+            var formattedValue;
+            var columnIndex = 0;
+            tableData.addRow();
+            tableData.setCell(rowIndex, columnIndex, results.name, '<b>' + results.name + '</b>', {'className': 'right-text'});
+            columnIndex++;
+
+            for (var i = 0; i < eventsArray.length; i++) {
+                var subEvent = eventsArray[i];
+                if (subEvent == 'break') {
+                    continue;
+                }
+                var mark = results.resultObj[subEvent];
+                var points = doCalculation(event.charAt(0), subEvent, mark);
+                totalPoints += points;
+                if (points) {
+                    formattedValue = '<b>' + mark + '</b><br><i>' + points + 'p</i>';
+                }
+                else {
+                    formattedValue = "";
+                }
+                tableData.setCell(rowIndex, columnIndex, totalPoints, formattedValue, {'className': 'center-text'});
+                columnIndex++;
+            }
+            tableData.setCell(rowIndex, columnIndex, totalPoints, '<b>' + totalPoints + 'p</b>', {'className': 'center-text'});
+            rowIndex++;
+            drawTable(tableData);
+        }
+    });        
+}
+
+function drawChart(chartData) {
+    // Set chart options
+    var options = {
+            legend: { position: 'top' },
+            pointSize: 10,
+            pointShape: 'diamond',
+            backgroundColor: { strokeWidth: 1 },
+            hAxis: { showTextEvery: '1', slantedText: true },
+            vAxis: { title: 'Poäng', baseline: 0 },
+            width: '600',
+            height: '300'
+    };
+
+    // Instantiate and draw our chart, passing in some options.
+    chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(chartData, options);
+}
+
+function drawTable(tableData) {
+    table = new google.visualization.Table(document.getElementById('table_div'));
+    table.draw(tableData, { allowHtml: true, showRowNumber: false });
+}
+
 function getEventTitle(event) {
     switch (event)
     {
@@ -356,26 +527,52 @@ function getSubEvents(event) {
 function getSubEventTitle(subEvent) {
     switch (subEvent)
     {
-        case '60' :   return "60 meter [s]";
-        case '100' :  return "100 meter [s]";
-        case '200' :  return "200 meter [s]";
-        case '300' :  return "300 meter [s]";
-        case '400' :  return "400 meter [s]";
-        case '600' :  return "600 meter [s]";
-        case '800' :  return "800 meter [s]";
-        case '1000' : return "1.000 meter [s]"; 
-        case '1500' : return "1.500 meter [s]";
-        case '60H' :  return "60 m häck [s]"; 
-        case '80H' :  return "80 m häck [s]";
-        case '100H' : return "100 m häck [s]"; 
-        case '110H' : return "110 m häck [s]"; 
-        case 'HJ' :   return "Höjdhopp [m]"; 
-        case 'PV' :   return "Stavhopp [m]"; 
-        case 'LJ' :   return "Längdhopp [m]";
-        case 'SP' :   return "Kula [m]";
-        case 'DT' :   return "Diskus [m]";
-        case 'JT' :   return "Spjut [m]";
-        case 'HT' :   return "Slägga [m]";
+        case '60' :   return "60 meter [s]:";
+        case '100' :  return "100 meter [s]:";
+        case '200' :  return "200 meter [s]:";
+        case '300' :  return "300 meter [s]:";
+        case '400' :  return "400 meter [s]:";
+        case '600' :  return "600 meter [s]:";
+        case '800' :  return "800 meter [s]:";
+        case '1000' : return "1.000 meter [s]:"; 
+        case '1500' : return "1.500 meter [s]:";
+        case '60H' :  return "60 m häck [s]:"; 
+        case '80H' :  return "80 m häck [s]:";
+        case '100H' : return "100 m häck [s]:"; 
+        case '110H' : return "110 m häck [s]:"; 
+        case 'HJ' :   return "Höjdhopp [m]:"; 
+        case 'PV' :   return "Stavhopp [m]:"; 
+        case 'LJ' :   return "Längdhopp [m]:";
+        case 'SP' :   return "Kula [m]:";
+        case 'DT' :   return "Diskus [m]:";
+        case 'JT' :   return "Spjut [m]:";
+        case 'HT' :   return "Slägga [m]:";
+    }
+}
+
+function getSubEventShortTitle(subEvent) {
+    switch (subEvent)
+    {
+        case '60' :   return "60m";
+        case '100' :  return "100m";
+        case '200' :  return "200m";
+        case '300' :  return "300m";
+        case '400' :  return "400m";
+        case '600' :  return "600m";
+        case '800' :  return "800m";
+        case '1000' : return "1.000m"; 
+        case '1500' : return "1.500m";
+        case '60H' :  return "60mH"; 
+        case '80H' :  return "80mH";
+        case '100H' : return "100mH"; 
+        case '110H' : return "110mH"; 
+        case 'HJ' :   return "Höjd"; 
+        case 'PV' :   return "Stav"; 
+        case 'LJ' :   return "Längd";
+        case 'SP' :   return "Kula";
+        case 'DT' :   return "Diskus";
+        case 'JT' :   return "Spjut";
+        case 'HT' :   return "Slägga";
     }
 }
 
