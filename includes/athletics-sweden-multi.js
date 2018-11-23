@@ -142,6 +142,7 @@ function content(event) {
 
 function footer() {
     var footerString =
+    '<p></p>' +
     '<center>' +
     '<table border="0" cellpadding="2" cellspacing="0" width="95%">' +
     '<tr>' +
