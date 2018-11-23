@@ -140,27 +140,6 @@ function content(event) {
     $('#content').html(contentString);
 }
 
-
-function charts() {
-    chartString =
-    '<div id="flip_charts">' +
-    '<table width="95%" align="center">' +
-    '<tr><td width="20px">&nbsp;</td><td align="center"><b>Tabell och kurva</b></td><td width="20px" align="right"><i class="fa fa-caret-left" style="font-size:20px"></i></td></tr>' +
-    '</table>' +
-    '</div>' +
-    '<div id="charts_panel">' +
-    '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
-    '<p></p>' +
-    '<table align="center">' +
-    '<tr><td align="center"><div id="table_div"><p>No data available</p></div></td></tr>' +
-    '<tr><td><p></p></td></tr>' +            
-    '<tr><td align="center"><div id="chart_div"></div></td></tr>' +
-    '</table>' +
-    '<p></p>' +
-    '</div>';
-    $('#charts').html(chartString);    
-}
-
 function footer() {
     var footerString =
     '<center>' +
@@ -196,8 +175,8 @@ function init(event) {
     header(title);
     menu(event);
     content(event);
-    if (event != 'm_start') {
-        charts();
+    if (event == 'm_start') {
+        $('#charts').html('');
     }
     footer();
 
