@@ -1,5 +1,13 @@
 $(function() {
 
+    var event = findGetParameter('event');
+    if (! event) {
+        event = 'm_start';
+    }
+
+    google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
+    google.charts.setOnLoadCallback(function() { init(event); });
+
     $("#flip_charts").click(function(){
         $("#charts_panel").slideToggle("slow");
         $("i", this).toggleClass("fa fa-caret-down fa fa-caret-left");
@@ -168,10 +176,6 @@ function dbStoreResults(id, event, name, resultObj) {
 }
 
 function init(event) {
-    var event = findGetParameter('event');
-    if (! event) {
-        event = 'm_start';
-    }
     var title = getEventTitle(event);
     header(title);
     menu(event);
