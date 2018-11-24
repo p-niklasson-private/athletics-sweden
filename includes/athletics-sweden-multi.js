@@ -1,16 +1,8 @@
 $(function() {
 
-    var event = findGetParameter('event');
-    if (! event) {
-        event = 'm_start';
-    }
-
-    google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
-    google.charts.setOnLoadCallback(function() { init(event); });
-
     $("#flip_charts").click(function(){
         $("#charts_panel").slideToggle("slow");
-        $("i", this).toggleClass("fa fa-caret-down fa fa-caret-left");
+        $("i", this).toggleClass("fa fa-caret-down fa fa-caret-up");
     });
     
 });
@@ -455,9 +447,15 @@ function drawChart(chartData) {
             pointShape: 'diamond',
             backgroundColor: { strokeWidth: 1 },
             hAxis: { showTextEvery: '1', slantedText: true },
-            vAxis: { title: 'Poäng', baseline: 0 },
-            width: '600',
-            height: '300'
+            vAxis: { baseline: 0 },
+            width: '500',
+            height: '320',
+            chartArea:{
+                left:50,
+                top: 60,
+                width:'430',
+                height: '200'
+            }
     };
 
     // Instantiate and draw our chart, passing in some options.

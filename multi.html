@@ -14,6 +14,17 @@
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-red.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="includes/athletics-sweden.css">
+    
+    <script type="text/javascript">
+        google.charts.load('visualization', '1', { packages : [ 'corechart', 'table', 'controls' ] });
+        google.charts.setOnLoadCallback(function() {
+            var event = findGetParameter('event');
+            if (! event) {
+                event = 'm_start';
+            }
+            init(event);
+        });
+    </script>
 
 </head>
 
@@ -26,10 +37,10 @@
     <div id="charts">
         <div id="flip_charts">
             <table width="95%" align="center">
-                <tr><td width="20px">&nbsp;</td><td align="center"><b>Tabell och kurva</b></td><td width="20px" align="right"><i class="fa fa-caret-left" style="font-size:20px"></i></td></tr>
+                <tr><td width="20px">&nbsp;</td><td align="center"><b>Tabell och kurva</b></td><td width="20px" align="right"><i class="fa fa-caret-down" style="font-size:20px"></i></td></tr>
             </table>
         </div>
-        <div id="charts_panel">
+        <div id="charts_panel" display="none">
             <p></p>
             <table align="center">
                 <tr><td><div id="table_div"><p>No data available</p></div></td></tr>
