@@ -43,21 +43,23 @@ function menu(active) {
     '<span onclick="w3_close()" class="w3-closenav w3-right w3-xlarge"><i class="fa fa-close"></i></span>' +
     '</div>' +
     '<br>' +
-    '<a ' + option('m_start', active)  + ' href="multi.html?event=m_start"><i class="fa fa-trophy"></i>  Mångkamp - Start</a>' +
+    '<a href="../index.html"><i class="fa fa-home"></i>  Hem</a>' +
     '<a href="#">=====================</a>' +
-    '<a ' + option('m_cast', active)   + ' href="multi.html?event=m_cast"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män Castorama</a>' +
-    '<a ' + option('m_10', active)     + ' href="multi.html?event=m_10"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 10-kamp</a>' +
-    '<a ' + option('m_7i', active)     + ' href="multi.html?event=m_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 7-kamp (i)</a>' +
-    '<a ' + option('p17_10', active)   + ' href="multi.html?event=p17_10"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 10-kamp</a>' +
-    '<a ' + option('p17_7i', active)   + ' href="multi.html?event=p17_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 7-kamp (i)</a>' +
-    '<a ' + option('p15_8', active)    + ' href="multi.html?event=p15_8"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 8-kamp</a>' +
-    '<a ' + option('p15_7i', active)   + ' href="multi.html?event=p15_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 7-kamp (i)</a>' +
+    '<a ' + option('m_start', active)  + ' href="index.html?event=m_start"><i class="fa fa-trophy"></i>  Mångkamp - Start</a>' +
     '<a href="#">=====================</a>' +
-    '<a ' + option('w_cast', active)   + ' href="multi.html?event=w_cast"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor Castorama</a>' +
-    '<a ' + option('w_7', active)      + ' href="multi.html?event=w_7"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 7-kamp</a>' +
-    '<a ' + option('w_5i', active)     + ' href="multi.html?event=w_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 5-kamp (i)</a>' +
-    '<a ' + option('f17_5i', active)   + ' href="multi.html?event=f17_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;F17 5-kamp (i)</a>' +
-    '<a ' + option('f15_6', active)    + ' href="multi.html?event=f15_6"><i class="fa fa-venus"></i>&nbsp;&nbsp;F15 6-kamp</a>' +
+    '<a ' + option('m_cast', active)   + ' href="index.html?event=m_cast"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män Castorama</a>' +
+    '<a ' + option('m_10', active)     + ' href="index.html?event=m_10"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 10-kamp</a>' +
+    '<a ' + option('m_7i', active)     + ' href="index.html?event=m_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;Män 7-kamp (i)</a>' +
+    '<a ' + option('p17_10', active)   + ' href="index.html?event=p17_10"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 10-kamp</a>' +
+    '<a ' + option('p17_7i', active)   + ' href="index.html?event=p17_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;P17 7-kamp (i)</a>' +
+    '<a ' + option('p15_8', active)    + ' href="index.html?event=p15_8"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 8-kamp</a>' +
+    '<a ' + option('p15_7i', active)   + ' href="index.html?event=p15_7i"><i class="fa fa-mars"></i>&nbsp;&nbsp;P15 7-kamp (i)</a>' +
+    '<a href="#">=====================</a>' +
+    '<a ' + option('w_cast', active)   + ' href="index.html?event=w_cast"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor Castorama</a>' +
+    '<a ' + option('w_7', active)      + ' href="index.html?event=w_7"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 7-kamp</a>' +
+    '<a ' + option('w_5i', active)     + ' href="index.html?event=w_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 5-kamp (i)</a>' +
+    '<a ' + option('f17_5i', active)   + ' href="index.html?event=f17_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;F17 5-kamp (i)</a>' +
+    '<a ' + option('f15_6', active)    + ' href="index.html?event=f15_6"><i class="fa fa-venus"></i>&nbsp;&nbsp;F15 6-kamp</a>' +
     '</nav>' +
     '<div class="w3-container" style="margin-top:60px"> </div>';
 
