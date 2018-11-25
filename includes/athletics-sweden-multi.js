@@ -100,8 +100,12 @@ function content(event) {
         '<table border="0" cellpadding="2" cellspacing="0" width="320px">' +
         '<tr>' +
         '<td align="left"><b>Namn:</b></td>' +
-        '<td colspan="2" align="center"><input type="text" id="name" size="14" placeholder="Ny post..." onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
+        '<td colspan="2" align="center"><input type="text" id="name" size="16" placeholder="Ny post..." onchange="updateItem(\'' + event + '\', \'name\', this.value)" /></td>' +
         '</tr>' +
+        '<tr>' +
+        '<td align="left"><b>Tävling:</b></td>' +
+        '<td colspan="2" align="center"><input type="text" id="competition" size="16" placeholder="Tävling..." onchange="updateItem(\'' + event + '\', \'competition\', this.value)" /></td>' +
+        '<tr/>' +
         '<tr>' +
         '<tr><td colspan="3">&nbsp;</td></tr>' +
         '<tr>' +
@@ -157,14 +161,15 @@ function footer() {
     $('#footer').html(footerString);
 }
 
-function dbStoreResults(id, event, name, resultObj) {
+function dbStoreResults(id, event, name, competition, resultObj) {
     console.log("Storing new data for '" + event + "' in indexedDB Storage:");
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(1).stores({ results: 'id, event, name, resultObj'})
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'})
     db.results.put({
         id: id,
 		event: event,
         name: name,
+        competition: competition,
         resultObj: resultObj
 	});
 }
@@ -198,13 +203,14 @@ function newItem(event) {
     console.log('Creating id \'' + id + '\'');
     var resultObj = {};
     var name = '';
+    var competition = '';
     var eventsArray = getSubEvents(event);
     for (var i = 0; i < eventsArray.length; i++) {
         var subEvent = eventsArray[i];
         if (subEvent == 'break') { continue; }
         resultObj[subEvent] = '';
     }
-    dbStoreResults(id, event, name, resultObj);
+    dbStoreResults(id, event, name, competition, resultObj);
     setItem(id, event);
 }
 
@@ -212,12 +218,12 @@ function deleteItem(event) {
     var id = getActiveItem(event);
     var db = new Dexie("athletics-sweden-multi-dexie");
     var deleteOk = false;
-    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     db.results.get(id, function (results) {
         
         // If the data item has a name, check if it is OK to delete it
         if (results.name) {
-            if (confirm("Ta bort data för \'" + results.name + "\'?")) {
+            if (confirm("Vill du verkligen ta bort data för \'" + results.name + "\'?")) {
                 deleteOk = true;
             }
         }
@@ -250,15 +256,18 @@ function updateItem(event, subEvent, mark) {
     var id = getActiveItem(event);
     console.log('Updating id \'' + id + '\'');
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     db.results.get(id, function (results) {
         if (subEvent == 'name') {
             results.name = mark;
         }
+        else if (subEvent == 'competition') {
+            results.competition = mark;
+        }
         else {
             results.resultObj[subEvent] = mark;
         }
-        dbStoreResults(id, event, results.name, results.resultObj);
+        dbStoreResults(id, event, results.name, results.competition, results.resultObj);
         setItem(id, event);
     });
 }
@@ -271,7 +280,7 @@ function setItem(id, event) {
 
 function displayItem(id, event) {
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     
     var buttonString1 =
         '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
@@ -309,6 +318,7 @@ function displayItem(id, event) {
     // Get details about the active item to be displayed
     db.results.get(id, function (results) {
         $('#name').val(results.name);
+        $('#competition').val(results.competition);
         var totalPoints = 0;
         var eventsArray = getSubEvents(results.event);
         for (var i = 0; i < eventsArray.length; i++) {
@@ -331,7 +341,7 @@ function populateData(event) {
 
 function populateChartData(event) {
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     var chartData = new google.visualization.DataTable();
 
     // Generate the first chart data column with all names of the events
@@ -387,7 +397,7 @@ function populateChartData(event) {
     
 function populateTableData(event) {
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(1).stores({ results: 'id, event, name, resultObj'});
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     var tableData = new google.visualization.DataTable();
 
     // Generate the data columns with all names of the events
@@ -414,7 +424,7 @@ function populateTableData(event) {
             var formattedValue;
             var columnIndex = 0;
             tableData.addRow();
-            tableData.setCell(rowIndex, columnIndex, results.name, '<b>' + results.name + '</b>', {'className': 'right-text'});
+            tableData.setCell(rowIndex, columnIndex, results.name, '<b>' + results.name + '</b><br><i>' + results.competition + '</i>', {'className': 'right-text'});
             columnIndex++;
 
             for (var i = 0; i < eventsArray.length; i++) {
