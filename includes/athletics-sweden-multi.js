@@ -174,6 +174,52 @@ function dbStoreResults(id, event, name, competition, resultObj) {
 	});
 }
 
+function dbReset() {
+    // If everything goes completely wrong, we might need to delete the whole DB and local data storage
+    if (confirm("Do you really want to delete the database \'athletics-sweden-multi-dexie\' and all related data?")) {
+        console.log("Delete indexedDB 'athletics-sweden-multi-dexie'");
+        var db = new Dexie("athletics-sweden-multi-dexie");
+        db.delete();
+    
+        // Also delete the localStorage data
+        if (localStorage) {
+            var eventsArray = getEvents();
+            for (var i = 0; i < eventsArray.length; i++) {
+                var event = eventsArray[i];
+                if (localStorage.getItem(event)) {
+                    console.log("Delete localStorage item '" + event + "'");
+                    localStorage.removeItem(event);
+                }
+            }
+        }
+        alert("The database \'athletics-sweden-multi-dexie\' is deleted!");
+    }
+}
+
+function expert() {
+    var title = 'Mångkamp - Expert';
+    header(title);
+    menu('');
+    var expertString = '';
+    
+    // Reset Database
+    expertString +=
+        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
+        '<p></p>' +
+        '<center>' +
+        '<table border="0" cellpadding="2" cellspacing="0" width="80%">' +
+        '<tr>' +
+        '<td><strong><input type="button" style="font-size:14px" title="Reset DB" onClick="dbReset()" value="Reset DB"></strong></td>' +
+        '<td>Delete the IndexedDB and all connected Data</td>' +
+        '</tr>' +
+        '</table>' +
+        '</center>' +
+        '<p></p>' +
+        '</div>';
+    $('#expert').html(expertString);
+    footer();
+}
+
 function init(event) {
     var title = getEventTitle(event);
     header(title);
@@ -478,6 +524,10 @@ function drawChart(chartData) {
 function drawTable(tableData) {
     table = new google.visualization.Table(document.getElementById('table_div'));
     table.draw(tableData, { allowHtml: true, showRowNumber: false });
+}
+
+function getEvents() {
+    return new Array('m_cast','m_10','m_7i','p17_10','p17_7i','p15_8','p15_7i','w_cast','w_7','w_5i','f17_5i','f15_6');
 }
 
 function getEventTitle(event) {
@@ -796,6 +846,9 @@ function getMeters(mark) {
 function getCentimeters(mark) {
     return mark * 100;
 }
+
+
+
 
 function findGetParameter(parameterName) {
     var result = null,
