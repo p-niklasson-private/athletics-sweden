@@ -11,9 +11,9 @@ function dbInfo() {
             dbInfoString += " " + table.name + ": " + "'" + schemaSyntax + "'" + (i < db.tables.length - 1 ? "," : "");
         });
         dbInfoString += " });\n";
+        $('textarea#db_info').val(dbInfoString);
     }).finally(function () {
         db.close();
-        $('textarea#db_info').val(dbInfoString);
     });  
 }
 
@@ -38,7 +38,12 @@ function importDB() {
     var dbContentString = $('textarea#db_content').val();
     
     // Parse the string to JSON and store the data in the database
-    var resultList = JSON.parse(dbContentString).results;
+    try { 
+        var resultsJson = JSON.parse(dbContentString);
+    } catch (e) {
+        console.log (e);
+    }
+    var resultList = resultsJson.results;
     resultList.forEach(function(result) {
         dbStoreResults(result.id, result.event, result.name, result.competition, result.resultObj);
     });
@@ -74,6 +79,10 @@ function resetDB() {
     }
 }
 
+function clearConsole() {
+    $('textarea#console_output').val('');
+}
+
 function Console() {
     this.textarea = document.getElementById('console_output');
     this.log = function (txt, type) {
@@ -88,7 +97,7 @@ function Console() {
 }
 
 function expert() {
-    var title = 'Mångkamp - Expert';
+    var title = 'Mångkamp - Expert - DB Read/Write';
     header(title);
     menu('');
     var expertString = 
@@ -107,26 +116,29 @@ function expert() {
     // Import and Export the Database
     expertString +=
         '<tr>' +
-        '<td align="right" valign="bottom"><b><input type="button" style="font-size:14px" title="View DB" onClick="viewDB()" value="View DB >>"></b></td>' +
+        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Read from DB" onClick="viewDB()" value="Read DB >>"></b></td>' +
         '<td rowspan="2"><textarea id="db_content" style="width: 1000px; height: 200px; font-size: 12px;">{ results: [] }</textarea></td>' +
         '</tr>' +
         '<tr>' +        
-        '<td align="right" valign="top"><b><input type="button" style="font-size:14px" title="Import DB" onClick="importDB()" value="Import DB <<"></b></td>' +
+        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Write to DB" onClick="importDB()" value="Write DB <<"></b></td>' +
         '</tr>';
 
     // Console output
     expertString +=
         '<tr>' +
-        '<td align="right" valign="top"><b>Console&nbsp;output:</b></td>' +
-        '<td><textarea id="console_output" style="width: 1000px; height: 120px; font-size: 12px;" readonly></textarea></td>' +
+        '<td align="right" valign="top"><b>Console:</b></td>' +
+        '<td rowspan="2"><textarea id="console_output" style="width: 1000px; height: 120px; font-size: 12px;" readonly></textarea></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td align="right"><input type="button" style="font-size:12px" title="Clear console" onClick="clearConsole()" value="Clear console"></td>' +
         '</tr>';
 
     // Reset DB
     expertString +=
         '<tr><td></td></tr>' +
         '<tr>' +        
-        '<td align="right"><b><input type="button" style="font-size:14px" title="Reset DB" onClick="resetDB()" value="Reset DB"></b></td>' +
-        '<td align="center"><b>Note!</b> This will delete you local database and all connected data!</td>' +
+        '<td align="right"><b><input type="button" style="font-size:12px" title="Reset DB" onClick="resetDB()" value="Reset DB"></b></td>' +
+        '<td align="left"><b>Note!</b> This will delete you local database and all connected data!</td>' +
         '</tr>';
         
     expertString +=    

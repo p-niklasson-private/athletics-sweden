@@ -164,7 +164,7 @@ function footer() {
 }
 
 function dbStoreResults(id, event, name, competition, resultObj) {
-    console.log("Storing new data for '" + event + "' in indexedDB Storage:");
+    console.log("Storing id '" + id + "' for '" + event + "' in indexedDB Storage");
     var db = new Dexie("athletics-sweden-multi-dexie");
     db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     db.results.put({
@@ -456,20 +456,20 @@ function populateTableData(event) {
 function drawChart(chartData) {
     // Set chart options
     var options = {
-            legend: { position: 'top' },
-            pointSize: 10,
-            pointShape: 'diamond',
-            backgroundColor: { strokeWidth: 1 },
-            hAxis: { showTextEvery: '1', slantedText: true },
-            vAxis: { baseline: 0 },
-            width: '500',
-            height: '320',
-            chartArea:{
-                left:50,
-                top: 60,
-                width:'430',
-                height: '200'
-            }
+        legend: { position: 'top' },
+        pointSize: 10,
+        pointShape: 'diamond',
+        backgroundColor: { strokeWidth: 1 },
+        hAxis: { showTextEvery: '1', slantedText: true },
+        vAxis: { baseline: 0 },
+        width: '600',
+        height: '320',
+        chartArea:{
+            left: 50,
+            top: 60,
+            width: '530',
+            height: '200'
+        }
     };
 
     // Instantiate and draw our chart, passing in some options.
