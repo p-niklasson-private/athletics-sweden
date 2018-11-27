@@ -60,6 +60,8 @@ function menu(active) {
     '<a ' + option('w_5i', active)     + ' href="index.html?event=w_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;Kvinnor 5-kamp (i)</a>' +
     '<a ' + option('f17_5i', active)   + ' href="index.html?event=f17_5i"><i class="fa fa-venus"></i>&nbsp;&nbsp;F17 5-kamp (i)</a>' +
     '<a ' + option('f15_6', active)    + ' href="index.html?event=f15_6"><i class="fa fa-venus"></i>&nbsp;&nbsp;F15 6-kamp</a>' +
+    '<a href="#">=====================</a>' +
+    '<a ' + option('expert', active)   + ' href="expert.html"><i class="fa fa-database"></i>&nbsp;&nbsp;Expert DB admin</a>' +
     '</nav>' +
     '<div class="w3-container" style="margin-top:60px"> </div>';
 
@@ -164,7 +166,7 @@ function footer() {
 function dbStoreResults(id, event, name, competition, resultObj) {
     console.log("Storing new data for '" + event + "' in indexedDB Storage:");
     var db = new Dexie("athletics-sweden-multi-dexie");
-    db.version(2).stores({ results: 'id, event, name, competition, resultObj'})
+    db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     db.results.put({
         id: id,
 		event: event,
@@ -172,52 +174,6 @@ function dbStoreResults(id, event, name, competition, resultObj) {
         competition: competition,
         resultObj: resultObj
 	});
-}
-
-function dbReset() {
-    // If everything goes completely wrong, we might need to delete the whole DB and local data storage
-    if (confirm("Do you really want to delete the database \'athletics-sweden-multi-dexie\' and all related data?")) {
-        console.log("Delete indexedDB 'athletics-sweden-multi-dexie'");
-        var db = new Dexie("athletics-sweden-multi-dexie");
-        db.delete();
-    
-        // Also delete the localStorage data
-        if (localStorage) {
-            var eventsArray = getEvents();
-            for (var i = 0; i < eventsArray.length; i++) {
-                var event = eventsArray[i];
-                if (localStorage.getItem(event)) {
-                    console.log("Delete localStorage item '" + event + "'");
-                    localStorage.removeItem(event);
-                }
-            }
-        }
-        alert("The database \'athletics-sweden-multi-dexie\' is deleted!");
-    }
-}
-
-function expert() {
-    var title = 'Mångkamp - Expert';
-    header(title);
-    menu('');
-    var expertString = '';
-    
-    // Reset Database
-    expertString +=
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
-        '<p></p>' +
-        '<center>' +
-        '<table border="0" cellpadding="2" cellspacing="0" width="80%">' +
-        '<tr>' +
-        '<td><strong><input type="button" style="font-size:14px" title="Reset DB" onClick="dbReset()" value="Reset DB"></strong></td>' +
-        '<td>Delete the IndexedDB and all connected Data</td>' +
-        '</tr>' +
-        '</table>' +
-        '</center>' +
-        '<p></p>' +
-        '</div>';
-    $('#expert').html(expertString);
-    footer();
 }
 
 function init(event) {
