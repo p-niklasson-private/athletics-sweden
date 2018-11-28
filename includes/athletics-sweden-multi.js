@@ -190,13 +190,25 @@ function init(event) {
         var id = getActiveItem(event);
         if (id != null) {
             console.log('Found item with id ' + id + '...');
-            displayItem(id, event);
+            setItem(id, event);
         }
-        else { 
-            console.log('Found no results in DB. Creating new item for ' + event + '...');
-            newItem(event);
+        else {
+            // Check if the DB contains any items (could be changed via expert page)
+            // Find the first item for the event, and set it as active
+            // If no item found, create a new item
+            var db = new Dexie("athletics-sweden-multi-dexie");
+            db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
+            var resultCollection = db.results.where('event').equals(event);
+            resultCollection.first(function(results) {
+                if (results) {
+                    setItem(results.id, event);
+                }
+                else {
+                    console.log('Found no results in DB. Creating new item for ' + event + '...');
+                    newItem(event);
+                }
+            });            
         }
-        populateData(event)
     }
 }
 

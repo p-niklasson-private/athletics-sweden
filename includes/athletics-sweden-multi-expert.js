@@ -17,7 +17,7 @@ function dbInfo() {
     });  
 }
 
-function viewDB() {
+function readDB() {
     var db = new Dexie("athletics-sweden-multi-dexie");
     var resultList = []; 
     db.open().then(function () {
@@ -33,11 +33,29 @@ function viewDB() {
     });
 }
 
-function importDB() {
+function readResultFile(file_name) {
+    console.log("Reading: " +file_name);
+    // Get the json data result file from disk. Easiest to do in PHP...
+    $.ajax({
+        url: "readDataFile.php",
+        dataType: "json",
+        data: {file_name: file_name},
+        async: true,
+        success: function(jsonObj) {
+            $('textarea#db_content').val(JSON.stringify(jsonObj));
+        },
+        error: function(xhr, status, error){
+            var errorMessage = xhr.status + ': ' + xhr.statusText;
+            console.log('Error - ' + errorMessage);
+     }
+    });
+}
+
+function writeDB() {
     // Read the DB content from the Textarea
     var dbContentString = $('textarea#db_content').val();
     
-    // Parse the string to JSON and store the data in the database
+    // Parse the string to JSON and write the data to the database
     try { 
         var resultsJson = JSON.parse(dbContentString);
     } catch (e) {
@@ -116,11 +134,11 @@ function expert() {
     // Import and Export the Database
     expertString +=
         '<tr>' +
-        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Read from DB" onClick="viewDB()" value="Read DB >>"></b></td>' +
-        '<td rowspan="2"><textarea id="db_content" style="width: 1000px; height: 200px; font-size: 12px;">{ results: [] }</textarea></td>' +
+        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Read from DB" onClick="readDB()" value="Read DB >>"></b></td>' +
+        '<td rowspan="2"><textarea id="db_content" style="width: 1000px; height: 200px; font-size: 12px;">{ "results": [] }</textarea></td>' +
         '</tr>' +
         '<tr>' +        
-        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Write to DB" onClick="importDB()" value="Write DB <<"></b></td>' +
+        '<td align="right" valign="top"><b><input type="button" style="font-size:12px" title="Write to DB" onClick="writeDB()" value="Write DB <<"></b></td>' +
         '</tr>';
 
     // Console output
@@ -153,6 +171,7 @@ function expert() {
     window.console = new Console();
 
     dbInfo();
-    viewDB();
+    readDB();
     footer();
+    readResultFile("data/records.json");
 }
