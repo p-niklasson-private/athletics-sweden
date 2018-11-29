@@ -27,6 +27,7 @@ function readDB() {
                 resultList.push('\n    ' + JSON.stringify(object));
                 var dbContentString = '{ "results": [' + resultList + '\n] }';
                 $('textarea#db_area').val(dbContentString);
+                $('#write_db').prop('disabled', false);
             });
         });
     }).finally(function () {
@@ -34,8 +35,45 @@ function readDB() {
     });
 }
 
-function readResultFile(file_name) {
-    var file_name = "data/records.json"
+function populateFileList() {
+    $.ajax({
+        url: "readDir.php",
+        dataType: "text",
+        data: {dir: "data"},
+        async: true,
+        success: function(string) {
+            // Populate dropdown menu
+            var selectFileString = '<select id="file_options" onchange="checkSelector()"><option value="">-- Select file... --</option>';
+            var files = string.split(',');
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if ( file ) {
+                    selectFileString += '<option value="data/' + file +'">' + file + '</option>';
+                }
+            }
+            selectFileString += '</select>';
+            $('#file_selector').html(selectFileString);
+        },
+        error: function(xhr, status, error){
+            var errorMessage = xhr.status + ': ' + xhr.statusText;
+            console.log('Error - ' + errorMessage);
+        }
+    });    
+}
+
+function checkSelector() {
+    // check to see if the file selector is a file
+    if ($('#file_options').val()) {
+        $('#read_file').prop('disabled', false);
+    }
+    else {
+        $('#read_file').prop('disabled', true);        
+    }
+}
+
+function readResultFile() {
+    //Read the file name from the drop down list
+    var file_name = $('#file_options').val();
     console.log("Reading: " + file_name);
     // Get the json data result file from disk. Easiest to do in PHP...
     $.ajax({
@@ -45,11 +83,12 @@ function readResultFile(file_name) {
         async: true,
         success: function(jsonObj) {
             $('textarea#db_area').val(JSON.stringify(jsonObj));
+            $('#write_db').prop('disabled', false);
         },
         error: function(xhr, status, error){
             var errorMessage = xhr.status + ': ' + xhr.statusText;
             console.log('Error - ' + errorMessage);
-     }
+        }
     });
 }
 
@@ -74,8 +113,15 @@ function resetDB() {
     if (confirm("Do you really want to delete the database \'athletics-sweden-multi-dexie\' and all related data?")) {
         console.log("Delete indexedDB 'athletics-sweden-multi-dexie'");
         var db = new Dexie("athletics-sweden-multi-dexie");
-        db.delete();
-    
+        db.delete().then(function () {
+            db = new Dexie("athletics-sweden-multi-dexie");
+            db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
+            db.open().then(function () {
+                dbInfo();
+                clearDbArea();
+            });
+        });
+            
         // Also delete the localStorage data
         if (localStorage) {
             var eventsArray = getEvents();
@@ -87,13 +133,6 @@ function resetDB() {
                 }
             }
         }
-        
-        // Recreate an empty DB
-        var db = new Dexie("athletics-sweden-multi-dexie");
-        db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
-        db.open().then(function () {
-            dbInfo();
-        });
     }
 }
 
@@ -103,6 +142,7 @@ function clearConsole() {
 
 function clearDbArea() {
     $('textarea#db_area').val('');
+    $('#write_db').prop('disabled', true);
 }
 
 
@@ -113,6 +153,9 @@ function Console() {
             this.textarea.value += type + " ";
         }
         this.textarea.value += txt + "\n";
+    }
+    this.warn = function (txt) {
+        // this.log(txt, "WARNING!");
     }
     this.error = function (txt) {
         this.log(txt, "ERROR!");
@@ -130,7 +173,7 @@ function expert() {
         '<p></p>' +
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
-        '<tr><td align="center" valign="top"><b>DB Info:</b></td></tr>' +
+        '<tr><td align="left" valign="top"><b>DB Info:</b></td></tr>' +
         '<tr><td><textarea id="db_info" style="width: 1000px; height: 60px; font-size: 12px;" readonly></textarea></td></tr>' +
         '</table>' +
         '</center>' +
@@ -143,19 +186,18 @@ function expert() {
         '<p></p>' +
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
-        '<tr><td colspan="2" align="center" valign="top"><b>DB Export and Import area:</b></td></tr>' +
+        '<tr><td align="left" valign="top"><b>DB Export and Import area:</b></td></tr>' +
         '<tr>' +
-        '<td align="left"><b><input type="button" style="font-size:12px" title="Read from DB" onClick="readDB()" value="Read from DB"></b></td>' +
-        '<td align="right">' +
-        '<select id="input_file"><option>-- Choose a file from server --</option><option>data/records.json</option></select>     ' +
-        '<b><input type="button" style="font-size:12px" title="Read from File" onClick="readResultFile()" value="Read from file"></b>' +
+        '<td align="left"><button style="font-size:12px" title="Read from DB" onClick="readDB()"><b>Read from DB</b></button></td>' +
+        '<td align="right"><i id="file_selector"></i>&nbsp;&nbsp;' +
+        '<button id="read_file" style="font-size:12px" title="Read from File" onClick="readResultFile()" disabled><b>Read from file</b></button>' +
         '</td>' +        
         '</tr>' +
         '<tr>' +
         '<td colspan="2"><textarea id="db_area" style="width: 1000px; height: 200px; font-size: 12px;" placeholder="DB Export/Import area"></textarea></td>' +
         '</tr>' +        
-        '<td align="left"><b><input type="button" style="font-size:12px" title="Write to DB" onClick="writeDB()" value="Write to DB"></b></td>' +
-        '<td align="right"><input type="button" style="font-size:12px" title="Clear Export/Import area" onClick="clearDbArea()" value="Clear"></b></td>' +
+        '<td align="left"><button id="write_db" style="font-size:12px title="Write to DB" onClick="writeDB()" disabled><b>Write to DB</b></button></td>' +
+        '<td align="right"><button style="font-size:12px" title="Clear Export/Import area" onClick="clearDbArea()">Clear</button></td>' +
         '</tr>' +
         '</table>' +
         '</center>' +
@@ -168,9 +210,9 @@ function expert() {
         '<p></p>' +
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
-        '<tr><td align="center" valign="top"><b>Console:</b></td></tr>' +
+        '<tr><td align="left"><b>Console:</b></td></tr>' +
         '<tr><td><textarea id="console_output" style="width: 1000px; height: 200px; font-size: 12px;" readonly></textarea></td></tr>' +
-        '<tr><td align="right"><input type="button" style="font-size:12px" title="Clear console" onClick="clearConsole()" value="Clear"></td></tr>' +
+        '<tr><td align="right"><button style="font-size:12px" title="Clear console" onClick="clearConsole()">Clear</button></td></tr>' +
         '</table>' +
         '</center>' +
         '<p></p>' +
@@ -182,9 +224,9 @@ function expert() {
         '<p></p>' +
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
-        '<tr><td colspan="2" align="center" valign="top"><b>Advanced:</b></td></tr>' +
+        '<tr><td align="left" valign="top"><b>Advanced:</b></td></tr>' +
         '<tr>' +        
-        '<td align="left"><b><input type="button" style="font-size:12px" title="Reset DB" onClick="resetDB()" value="Reset DB"></b></td>' +
+        '<td align="left"><button style="font-size:12px" title="Reset DB" onClick="resetDB()"><b>Reset DB</b></button></td>' +
         '<td align="left"><b>Note!</b> This will delete you local database and all connected data!</td>' +
         '</tr>' +
         '</table>' +
@@ -197,6 +239,7 @@ function expert() {
     // Redirect console.log 
     window.console = new Console();
 
+    populateFileList();
     dbInfo();
     footer();
 }
