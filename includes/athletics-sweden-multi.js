@@ -164,7 +164,7 @@ function footer() {
 }
 
 function dbStoreResults(id, event, name, competition, resultObj) {
-    console.log("Storing id '" + id + "' for '" + event + "' in indexedDB Storage");
+    console.log("Storing id '" + id + "' for '" + event + "' in 'athletics-sweden-multi-dexie'");
     var db = new Dexie("athletics-sweden-multi-dexie");
     db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
     db.results.put({
