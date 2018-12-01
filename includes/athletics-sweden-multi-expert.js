@@ -168,33 +168,31 @@ function expert() {
     menu('');
 
     // Display info about the Database
-    var expertString = 
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
+    var expertString =
         '<p></p>' +
         '<center>' +
-        '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
+        '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left" valign="top"><b>DB Info:</b></td></tr>' +
-        '<tr><td><textarea id="db_info" style="width: 1000px; height: 60px; font-size: 12px;" readonly></textarea></td></tr>' +
+        '<tr><td><textarea id="db_info" style="width: 600px; height: 60px; font-size: 12px;" readonly></textarea></td></tr>' +
         '</table>' +
         '</center>' +
         '<p></p>' +
-        '</div>';
+        '<hr>';
 
     // Import and Export the Database
     expertString +=
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
         '<p></p>' +
         '<center>' +
-        '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
+        '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left" valign="top"><b>DB Export and Import area:</b></td></tr>' +
         '<tr>' +
         '<td align="left"><button style="font-size:12px" title="Read from DB" onClick="readDB()"><b>Read from DB</b></button></td>' +
-        '<td align="right"><i id="file_selector"></i>&nbsp;&nbsp;' +
+        '<td align="right"><span id="file_selector"></span>&nbsp;&nbsp;' +
         '<button id="read_file" style="font-size:12px" title="Read from File" onClick="readResultFile()" disabled><b>Read from file</b></button>' +
         '</td>' +        
         '</tr>' +
         '<tr>' +
-        '<td colspan="2"><textarea id="db_area" style="width: 1000px; height: 200px; font-size: 12px;" placeholder="DB Export/Import area"></textarea></td>' +
+        '<td colspan="2"><textarea id="db_area" style="width: 600px; height: 200px; font-size: 12px;" placeholder="DB Export/Import area"></textarea></td>' +
         '</tr>' +        
         '<td align="left"><button id="write_db" style="font-size:12px title="Write to DB" onClick="writeDB()" disabled><b>Write to DB</b></button></td>' +
         '<td align="right"><button style="font-size:12px" title="Clear Export/Import area" onClick="clearDbArea()">Clear</button></td>' +
@@ -202,28 +200,26 @@ function expert() {
         '</table>' +
         '</center>' +
         '<p></p>' +
-        '</div>';
+        '<hr>';
 
     // Console output
     expertString +=
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
         '<p></p>' +
         '<center>' +
-        '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
+        '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left"><b>Console:</b></td></tr>' +
-        '<tr><td><textarea id="console_output" style="width: 1000px; height: 200px; font-size: 12px;" readonly></textarea></td></tr>' +
+        '<tr><td><textarea id="console_output" style="width: 600px; height: 200px; font-size: 12px;" readonly></textarea></td></tr>' +
         '<tr><td align="right"><button style="font-size:12px" title="Clear console" onClick="clearConsole()">Clear</button></td></tr>' +
         '</table>' +
         '</center>' +
         '<p></p>' +
-        '</div>';
+        '<hr>';
         
     // Advanced
     expertString +=
-        '<div class="w3-container w3-round-large w3-light-grey w3-margin">' +
         '<p></p>' +
         '<center>' +
-        '<table border="0" cellpadding="2" cellspacing="2" width="1000px">' +
+        '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left" valign="top"><b>Advanced:</b></td></tr>' +
         '<tr>' +        
         '<td align="left"><button style="font-size:12px" title="Reset DB" onClick="resetDB()"><b>Reset DB</b></button></td>' +
@@ -231,8 +227,7 @@ function expert() {
         '</tr>' +
         '</table>' +
         '</center>' +
-        '<p></p>' +
-        '</div>';
+        '<p></p>';
 
     $('#expert').html(expertString);
     
