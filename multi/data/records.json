@@ -1,6 +1,75 @@
-{ "results": [
-    {"id":"WR-M10","event":"m_10","name":"WR - Kevin Mayer","competition":"Decastar, Talence 2018","resultObj":{"100":"10.55","400":"48.42","1500":"276.11","LJ":"7.80","SP":"16.00","HJ":"2.05","110H":"13.75","DT":"50.54","PV":"5.45","JT":"71.90"}},
-    {"id":"NR-M10","event":"m_10","name":"NR - Nicklas Wiberg","competition":"VM, Berlin 2009","resultObj":{"100":"10.96","400":"48.73","1500":"257.05","LJ":"7.25","SP":"14.99","HJ":"2.05","110H":"14.75","DT":"42.28","PV":"4.50","JT":"75.02"}},
-    {"id":"NR-W7","event":"w_7","name":"NR - Carolina Klüft","competition":"VM, Osaka 2007","resultObj":{"200":"23.38","800":"132.56","100H":"13.15","HJ":"1.95","SP":"14.81","LJ":"6.85","JT":"47.98"}},
-    {"id":"WR-W7","event":"w_7","name":"WR - Jackie Joyner-Kersee","competition":"OS, Seoul 1988","resultObj":{"200":"22.56","800":"128.51","100H":"12.69","HJ":"1.86","SP":"15.80","LJ":"7.27","JT":"45.66"}}
-] }
+{
+  "description": "Världsrekord och svenska rekord",
+  "results": [
+    {
+      "id": "WR-M10",
+      "event": "m_10",
+      "name": "WR - Kevin Mayer",
+      "competition": "Decastar, Talence",
+      "date": "2018-09-16",
+      "resultObj": {
+        "100": "10.55",
+        "400": "48.42",
+        "1500": "276.11",
+        "LJ": "7.80",
+        "SP": "16.00",
+        "HJ": "2.05",
+        "110H": "13.75",
+        "DT": "50.54",
+        "PV": "5.45",
+        "JT": "71.90"
+      }
+    },
+    {
+      "id": "NR-M10",
+      "event": "m_10",
+      "name": "NR - Nicklas Wiberg",
+      "competition": "VM, Berlin",
+      "date": "2009-08-20",
+      "resultObj": {
+        "100": "10.96",
+        "400": "48.73",
+        "1500": "257.05",
+        "LJ": "7.25",
+        "SP": "14.99",
+        "HJ": "2.05",
+        "110H": "14.75",
+        "DT": "42.28",
+        "PV": "4.50",
+        "JT": "75.02"
+      }
+    },
+    {
+      "id": "NR-W7",
+      "event": "w_7",
+      "name": "NR - Carolina Klüft",
+      "competition": "VM, Osaka",
+      "date": "2007-08-26",
+      "resultObj": {
+        "200": "23.38",
+        "800": "132.56",
+        "100H": "13.15",
+        "HJ": "1.95",
+        "SP": "14.81",
+        "LJ": "6.85",
+        "JT": "47.98"
+      }
+    },
+    {
+      "id": "WR-W7",
+      "event": "w_7",
+      "name": "WR - Jackie Joyner-Kersee",
+      "competition": "OS, Seoul 1988",
+      "date": "1988-09-24",
+      "resultObj": {
+        "200": "22.56",
+        "800": "128.51",
+        "100H": "12.69",
+        "HJ": "1.86",
+        "SP": "15.80",
+        "LJ": "7.27",
+        "JT": "45.66"
+      }
+    }
+  ]
+}

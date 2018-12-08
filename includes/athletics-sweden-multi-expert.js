@@ -24,9 +24,11 @@ function readDB() {
         db.tables.forEach(function (table, i) {
             table.each(function (object) {
                 console.log("Reading from db, id: " + object.id );
-                resultList.push('\n    ' + JSON.stringify(object));
-                var dbContentString = '{ "results": [' + resultList + '\n] }';
-                $('textarea#db_area').val(dbContentString);
+                resultList.push(JSON.stringify(object));
+                var dbContentString = '{"description":"","results": [' + resultList + ']}';
+                var jsonObj = JSON.parse(dbContentString);
+                // Use JSON stringify to create a nicely formatted outout
+                $('textarea#db_area').val(JSON.stringify(jsonObj,null,2));
                 $('#write_db').prop('disabled', false);
             });
         });
@@ -82,7 +84,7 @@ function readResultFile() {
         data: {file_name: file_name},
         async: true,
         success: function(jsonObj) {
-            $('textarea#db_area').val(JSON.stringify(jsonObj));
+            $('textarea#db_area').val(JSON.stringify(jsonObj,null,2));
             $('#write_db').prop('disabled', false);
         },
         error: function(xhr, status, error){
@@ -104,7 +106,7 @@ function writeDB() {
     }
     var resultList = resultsJson.results;
     resultList.forEach(function(result) {
-        dbStoreResults(result.id, result.event, result.name, result.competition, result.resultObj);
+        dbStoreResults(result.id, result.event, result.name, result.competition, result.date, result.resultObj);
     });
 }
 
@@ -115,7 +117,7 @@ function resetDB() {
         var db = new Dexie("athletics-sweden-multi-dexie");
         db.delete().then(function () {
             db = new Dexie("athletics-sweden-multi-dexie");
-            db.version(2).stores({ results: 'id, event, name, competition, resultObj'});
+            db.version(3).stores({ results: 'id, event, name, competition, date, resultObj'});
             db.open().then(function () {
                 dbInfo();
                 clearDbArea();
@@ -145,7 +147,6 @@ function clearDbArea() {
     $('#write_db').prop('disabled', true);
 }
 
-
 function Console() {
     this.textarea = document.getElementById('console_output');
     this.log = function (txt, type) {
@@ -173,7 +174,7 @@ function expert() {
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left" valign="top"><b>DB Info:</b></td></tr>' +
-        '<tr><td><textarea id="db_info" style="width: 600px; height: 60px; font-size: 12px;" readonly></textarea></td></tr>' +
+        '<tr><td><textarea id="db_info" style="width: 600px; height: 70px;" readonly></textarea></td></tr>' +
         '</table>' +
         '</center>' +
         '<p></p>' +
@@ -192,9 +193,9 @@ function expert() {
         '</td>' +        
         '</tr>' +
         '<tr>' +
-        '<td colspan="2"><textarea id="db_area" style="width: 600px; height: 200px; font-size: 12px;" placeholder="DB Export/Import area"></textarea></td>' +
+        '<td colspan="2"><textarea id="db_area" style="width: 600px; height: 200px;" placeholder="DB Export/Import area"></textarea></td>' +
         '</tr>' +        
-        '<td align="left"><button id="write_db" style="font-size:12px title="Write to DB" onClick="writeDB()" disabled><b>Write to DB</b></button></td>' +
+        '<td align="left"><button id="write_db" style="font-size:12px" title="Write to DB" onClick="writeDB()" disabled><b>Write to DB</b></button></td>' +
         '<td align="right"><button style="font-size:12px" title="Clear Export/Import area" onClick="clearDbArea()">Clear</button></td>' +
         '</tr>' +
         '</table>' +
@@ -208,7 +209,7 @@ function expert() {
         '<center>' +
         '<table border="0" cellpadding="2" cellspacing="2" width="600px">' +
         '<tr><td align="left"><b>Console:</b></td></tr>' +
-        '<tr><td><textarea id="console_output" style="width: 600px; height: 200px; font-size: 12px;" readonly></textarea></td></tr>' +
+        '<tr><td><textarea id="console_output" style="width: 600px; height: 200px;" readonly></textarea></td></tr>' +
         '<tr><td align="right"><button style="font-size:12px" title="Clear console" onClick="clearConsole()">Clear</button></td></tr>' +
         '</table>' +
         '</center>' +
