@@ -2,6 +2,22 @@
   "description": "Världsrekord och svenska rekord",
   "results": [
     {
+      "id": "WR-M7i",
+      "event": "m_7i",
+      "name": "WR - Ashton Eaton",
+      "competition": "IVM Turkiet",
+      "date": "2012-03-10",
+      "resultObj": {
+        "60": "6.79",
+        "1000": "152.78",
+        "LJ": "8.16",
+        "SP": "14.56",
+        "HJ": "2.03",
+        "60H": "7.68",
+        "PV": "5.20"
+      }
+    },    
+    {
       "id": "WR-M10",
       "event": "m_10",
       "name": "WR - Kevin Mayer",
@@ -37,6 +53,20 @@
         "DT": "42.28",
         "PV": "4.50",
         "JT": "75.02"
+      }
+    },
+    {
+      "id": "WR-W5i",
+      "event": "w_5i",
+      "name": "WR - Nataliya Dobrynska",
+      "competition": "IVM Turkiet",
+      "date": "2012-03-09",
+      "resultObj": {
+        "800": "131.15",
+        "60H": "8.38",
+        "HJ": "1.84",
+        "SP": "16.51",
+        "LJ": "6.57"
       }
     },
     {

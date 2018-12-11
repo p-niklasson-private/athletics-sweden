@@ -23,7 +23,7 @@ function readDB() {
     db.open().then(function () {
         db.tables.forEach(function (table, i) {
             table.each(function (object) {
-                console.log("Reading from db, id: " + object.id );
+                console.log("Reading from db: id = " + object.id);
                 resultList.push(JSON.stringify(object));
                 var dbContentString = '{"description":"","results": [' + resultList + ']}';
                 var jsonObj = JSON.parse(dbContentString);
@@ -45,7 +45,7 @@ function populateFileList() {
         async: true,
         success: function(string) {
             // Populate dropdown menu
-            var selectFileString = '<select id="file_options" onchange="checkSelector()"><option value="">-- Select file... --</option>';
+            var selectFileString = '<select id="file_options" onchange="checkSelector()"><option value="">-- Select file --</option>';
             var files = string.split(',');
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];

@@ -1,0 +1,65 @@
+{
+  "description": "HSK Klubbrekord",
+  "results": [
+    {
+      "id": "HSK_P14_7i",
+      "event": "p15_7i",
+      "name": "Henrik Hansson",
+      "competition": "HSK Klubbrekord P14",
+      "date": "2007-03-04",
+      "resultObj": {
+        "60": "8.66",
+        "600": "110.86",
+        "PV": "2.70",
+        "LJ": "4.53",
+        "60H": "10.93",
+        "HJ": "1.43",
+        "SP": "7.37"
+      }
+    },
+    {
+      "id": "HSK_P15_7i",
+      "event": "p15_7i",
+      "name": "Joel Ahl",
+      "competition": "HSK Klubbrekord P15",
+      "date": "2004",
+      "resultObj": {
+        "60": "8.13",
+        "600": "96.49",
+        "PV": "3.02",
+        "LJ": "5.60",
+        "60H": "9.84",
+        "HJ": "1.70",
+        "SP": "13.69"
+      }
+    },
+    {
+      "id": "HSK_F14_5i",
+      "event": "f17_5i",
+      "name": "Mia Border",
+      "competition": "HSK Klubbrekord F14",
+      "date": "2008",
+      "resultObj": {
+        "600": "112.97",
+        "60H": "9.63",
+        "HJ": "1.40",
+        "SP": "10.02",
+        "LJ": "4.70"
+      }
+    },
+    {
+      "id": "HSK_F15_5i",
+      "event": "f17_5i",
+      "name": "Mia Border",
+      "competition": "HSK Klubbrekord F15",
+      "date": "2009-02-04",
+      "resultObj": {
+        "600": "112.97",
+        "60H": "9.35",
+        "HJ": "1.52",
+        "SP": "11.10",
+        "LJ": "4.82"
+      }
+    }
+  ]
+}
