@@ -540,8 +540,8 @@ function getSubEvents(event) {
         case 'p15_7i' :  return new Array('60', 'PV', 'LJ', 'break', '60H', 'HJ', 'SP', '600');
         case 'w_cast' :  return new Array('SP', 'DT', 'JT', 'HT');
         case 'w_7' :     return new Array('100H', 'HJ', 'SP', '200', 'break', 'LJ', 'JT', '800');
-        case 'w_5i' :    return new Array('60H', 'HJ', 'SP', 'break', 'LJ', '800');
-        case 'f17_5i' :  return new Array('60H', 'HJ', 'SP', 'break', 'LJ', '600');        
+        case 'w_5i' :    return new Array('60H', 'HJ', 'SP', 'LJ', '800');
+        case 'f17_5i' :  return new Array('60H', 'HJ', 'SP', 'LJ', '600');        
         case 'f15_6' :   return new Array('80H', 'HJ', 'SP', 'break', 'LJ', 'JT', '600');
     }
 }
