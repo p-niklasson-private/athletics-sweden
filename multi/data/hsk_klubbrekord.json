@@ -60,6 +60,20 @@
         "SP": "11.10",
         "LJ": "4.82"
       }
+    },
+    {
+      "id": "HSK_F16_5i",
+      "event": "f17_5i",
+      "name": "Alice Lind",
+      "competition": "HSK Klubbrekord F16",
+      "date": "2019-01-30",
+      "resultObj": {
+        "600": "134.24",
+        "60H": "12.24",
+        "HJ": "1.45",
+        "SP": "9.45",
+        "LJ": "3.91"
+      }
     }
   ]
 }
